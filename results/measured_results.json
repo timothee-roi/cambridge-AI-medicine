@@ -1,0 +1,289 @@
+{
+  "_readme": "Every number below was measured; 'source' gives the notebook cell or log it was copied from. Nothing here is projected.",
+  "preprocessing": {
+    "source": "notebooks/01_preprocessing.ipynb (saved outputs)",
+    "raw_rows": {
+      "admissions": 546028,
+      "diagnoses_icd": 6364488,
+      "patients": 364627,
+      "procedures_icd": 859655,
+      "prescriptions": 20292611
+    },
+    "diagnoses_by_icd_version": {
+      "9": 2908741,
+      "10": 3455747
+    },
+    "icd10_rows_mapped_to_icd9": 3369169,
+    "icd10_rows_total": 3455747,
+    "mean_codes_per_visit": {
+      "dx": 11.7,
+      "px": 1.6,
+      "rx_atc3": 18.1,
+      "total": 31.3
+    },
+    "adult_patients": 364627,
+    "patients_with_0_admissions": 141175,
+    "patients_with_1_admission": 123289,
+    "patients_with_2_admissions": 44123,
+    "patients_with_3plus_admissions": 56040,
+    "eligible_patients": 100163,
+    "split_patients": {
+      "train": 70114,
+      "val": 15024,
+      "test": 15025
+    },
+    "samples": {
+      "train": 225024,
+      "val": 15004,
+      "test": 15010
+    },
+    "labels": 572,
+    "patient_level_quartiles": {
+      "q25": 166,
+      "q75": 2688,
+      "n_rare": 143,
+      "n_medium": 286,
+      "n_common": 143
+    },
+    "acc_at_m": [
+      11,
+      20
+    ],
+    "top20_share_of_label_occurrences": 0.285,
+    "input_vocab": {
+      "dx_ccs": 576,
+      "rx_atc3": 201,
+      "px_ccs": 230
+    }
+  },
+  "backbone_nb2": {
+    "source": "notebooks/02_backbone_transformer.ipynb (saved outputs)",
+    "params": 3064636,
+    "val_history": [
+      {
+        "epoch": 1,
+        "minutes": 33.3,
+        "train_loss": 0.0692,
+        "val_sample_auprc": 0.4477,
+        "val_macro_label_auprc": 0.1378,
+        "val_f1_05": 0.0605
+      },
+      {
+        "epoch": 2,
+        "minutes": 91.5,
+        "train_loss": 0.063,
+        "val_sample_auprc": 0.4618,
+        "val_macro_label_auprc": 0.1492,
+        "val_f1_05": 0.0745
+      },
+      {
+        "epoch": 3,
+        "minutes": 82.6,
+        "train_loss": 0.0621,
+        "val_sample_auprc": 0.4699,
+        "val_macro_label_auprc": 0.1596,
+        "val_f1_05": 0.0846
+      },
+      {
+        "epoch": 4,
+        "minutes": 61.9,
+        "train_loss": 0.0617,
+        "val_sample_auprc": 0.468,
+        "val_macro_label_auprc": 0.1665,
+        "val_f1_05": 0.0819
+      },
+      {
+        "epoch": 5,
+        "minutes": 82.2,
+        "train_loss": 0.0614,
+        "val_sample_auprc": 0.4723,
+        "val_macro_label_auprc": 0.1707,
+        "val_f1_05": 0.0864
+      },
+      {
+        "epoch": 6,
+        "minutes": 147.9,
+        "train_loss": 0.0611,
+        "val_sample_auprc": 0.4703,
+        "val_macro_label_auprc": 0.175,
+        "val_f1_05": 0.0835
+      },
+      {
+        "epoch": 7,
+        "minutes": 966.7,
+        "train_loss": 0.061,
+        "val_sample_auprc": 0.4713,
+        "val_macro_label_auprc": 0.1801,
+        "val_f1_05": 0.0868
+      }
+    ],
+    "best_epoch": 5,
+    "stopped": "manually after epoch 7 (no early-stopping message)",
+    "sample_level_quartile_bounds": {
+      "q25": 200,
+      "q50": 1132,
+      "q75": 4258
+    },
+    "test_sample_auprc": {
+      "overall": 0.4707,
+      "Q1": 0.2896,
+      "Q2": 0.3052,
+      "Q3": 0.3674,
+      "Q4": 0.5429,
+      "gap_Q4_Q1": 0.2533
+    },
+    "test_samples_with_positive_in_quartile": {
+      "Q1": 702,
+      "Q2": 4915,
+      "Q3": 10667,
+      "Q4": 14812
+    }
+  },
+  "looped_gpu_smoke_test": {
+    "source": "DGX job 9379 log (papermill), 2026-10-12; L1_final, 1 epoch, 1g.10gb MIG slice",
+    "equivalence_T1_max_logit_diff": 0.0,
+    "minutes_per_epoch": 10.6,
+    "train_loss": 0.0694,
+    "val_sample_auprc": 0.4471,
+    "test": {
+      "overall": 0.4451,
+      "Q1": 0.2174,
+      "Q2": 0.2424,
+      "Q3": 0.3229,
+      "Q4": 0.5219,
+      "macro_label_auprc_rare": 0.0112,
+      "acc_at_11": 0.4168
+    }
+  },
+  "looped_first_runs_superseded": {
+    "source": "DGX jobs 9393-9396 logs, 2026-10-12, notebook version with PyHealth block dropout on the recurrent state",
+    "status": "superseded: runs cancelled after the stream-dropout issue was found; reported only to document the issue",
+    "val_sample_auprc_by_depth": {
+      "L4_gate_b0.001": {
+        "epoch1": [
+          0.4486,
+          0.441,
+          0.4265,
+          0.4115
+        ],
+        "epoch2": [
+          0.4627,
+          0.4593,
+          0.449,
+          0.4362
+        ]
+      },
+      "L4_final": {
+        "epoch1": [
+          0.2867,
+          0.329,
+          0.3346,
+          0.3301
+        ],
+        "epoch2": [
+          0.3119,
+          0.3423,
+          0.3593,
+          0.3636
+        ],
+        "epoch3": [
+          0.3169,
+          0.3559,
+          0.377,
+          0.3819
+        ]
+      },
+      "L4_geometric": {
+        "epoch1": [
+          0.3337,
+          0.3672,
+          0.3552,
+          0.355
+        ],
+        "epoch2": [
+          0.3656,
+          0.3933,
+          0.3893,
+          0.3949
+        ]
+      },
+      "L4_uniform": {
+        "epoch1": [
+          0.3457,
+          0.3766,
+          0.3673,
+          0.368
+        ],
+        "epoch2": [
+          0.3745,
+          0.4052,
+          0.2386,
+          0.2443
+        ]
+      }
+    },
+    "minutes_per_epoch": {
+      "L4_gate_b0.001 (prod10)": 13.8,
+      "L4_final (prod40)": 12.5,
+      "L4_geometric (prod40)": 12.2,
+      "L4_uniform (prod10)": 13.5
+    }
+  },
+  "hypothesis_A_embedding_corruption": {
+    "source": "report draft (Hypothesis A notebook, single-epoch checkpoint; notebook not yet in this repository)",
+    "n_sources": 72,
+    "sparse_vs_rich": [
+      36,
+      36
+    ],
+    "n_draws": 50,
+    "mean_delta_auprc": {
+      "sparse": -0.002,
+      "rich": -3e-05
+    },
+    "diff_bootstrap_ci95": [
+      -0.0033,
+      -0.0009
+    ],
+    "mann_whitney_U": 268,
+    "mann_whitney_p": 3.2e-05,
+    "welch_t": -3.16,
+    "welch_p": 0.003,
+    "share_negative": {
+      "sparse": 0.886,
+      "rich": 0.583
+    },
+    "spearman_context_vs_delta": {
+      "rho": 0.46,
+      "p": 4.7e-05
+    }
+  },
+  "hypothesis_C_decoupling": {
+    "source": "report draft (Hypothesis C notebook, single-epoch checkpoint; notebook not yet in this repository)",
+    "label_auprc_rare": {
+      "baseline": 0.072,
+      "class_balanced_readout": 0.082
+    },
+    "label_auprc_common": {
+      "baseline": 0.286,
+      "class_balanced_readout": 0.295
+    },
+    "sample_auprc_gain": 0.009,
+    "regression_ap_vs_logn": {
+      "n_labels": 572,
+      "r": 0.48,
+      "p": 1.1e-32,
+      "r2": 0.23
+    }
+  },
+  "embedding_clustering": {
+    "source": "report draft (clustering notebook)",
+    "silhouette_range_k5_40": [
+      0.022,
+      0.028
+    ]
+  },
+  "public_resources": {
+    "source": "notebooks/04_rare_disease_resources.ipynb, results/rare_disease_resources.json"
+  }
+}

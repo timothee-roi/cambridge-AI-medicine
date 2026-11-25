@@ -1,0 +1,590 @@
+ccs,label,n_rare,n_rare_exact,n_rare_with_hpo,n_rare_with_genes
+1.1.1,Tuberculosis,16,7,0,0
+1.1.2.1,Streptococcal septicemia,0,0,0,0
+1.1.2.2,Staphylococcal septicemia,0,0,0,0
+1.1.2.3,E. Coli septicemia,0,0,0,0
+1.1.2.4,Other gram negative septicemia,0,0,0,0
+1.1.2.5,Other specified septicemia,5,4,1,0
+1.1.2.6,Unspecified septicemia,1,1,0,0
+1.1.3,Sexually transmitted infections (not HIV or hepatitis),16,10,2,1
+1.1.4,Other bacterial infections,42,25,17,2
+1.2.1,Candidiasis of the mouth (thrush),0,0,0,0
+1.2.2,Other mycoses,16,12,7,1
+1.3.1,HIV infection,38,0,27,26
+1.3.2,Hepatitis,6,2,3,0
+1.3.3.1,Herpes zoster infection,1,0,0,0
+1.3.3.2,Herpes simplex infection,0,0,0,0
+1.3.3.3,Other and unspecified viral infection,36,26,15,1
+1.4,Other infections; including parasitic,90,67,21,2
+1.5,Immunizations and screening for infectious disease,0,0,0,0
+10.1.1,Nephritis; nephrosis; renal sclerosis,46,4,31,22
+10.1.2.1,Acute renal failure,0,0,0,0
+10.1.2.2,Unspecified renal failure,0,0,0,0
+10.1.3,Chronic kidney disease,0,0,0,0
+10.1.4.1,Infections of kidney,2,0,2,1
+10.1.4.2,Cystitis and urethritis,2,2,1,0
+10.1.4.3,Urinary tract infection; site not specified,0,0,0,0
+10.1.5.1,Calculus of kidney,0,0,0,0
+10.1.5.2,Calculus of ureter,0,0,0,0
+10.1.5.3,Other and unspecified urinary calculus,0,0,0,0
+10.1.6.1,Hydronephrosis,0,0,0,0
+10.1.6.2,Other and unspecified diseases of kidney and ureters,18,2,12,7
+10.1.7.1,Bladder neck obstruction,0,0,0,0
+10.1.7.2,Other and unspecified diseases of bladder and urethra,2,0,2,1
+10.1.8.1,Hematuria,0,0,0,0
+10.1.8.2,Retention of urine,0,0,0,0
+10.1.8.3,Other and unspecified genitourinary symptoms,0,0,0,0
+10.2.1,Hyperplasia of prostate,0,0,0,0
+10.2.2,Inflammatory conditions of male genital organs,0,0,0,0
+10.2.3,Other male genital disorders,1,1,0,0
+10.3.1,Nonmalignant breast conditions,2,0,0,0
+10.3.2.1,Pelvic peritoneal adhesions,0,0,0,0
+10.3.2.2,Cervicitis and endocervicitis,0,0,0,0
+10.3.2.3,Pelvic inflammatory disease (PID),0,0,0,0
+10.3.2.4,Other inflammatory diseases of female pelvic organs,0,0,0,0
+10.3.3,Endometriosis,0,0,0,0
+10.3.4,Prolapse of female genital organs,0,0,0,0
+10.3.5,Menstrual disorders,0,0,0,0
+10.3.6,Ovarian cyst,0,0,0,0
+10.3.7,Menopausal disorders,0,0,0,0
+10.3.8,Female infertility,1,0,1,1
+10.3.9,Other female genital disorders,0,0,0,0
+10.3.9.1,Female genital pain and other symptoms,0,0,0,0
+10.3.9.2,Other and unspecified female genital disorders,1,1,1,0
+11.1,Contraceptive and procreative management,0,0,0,0
+11.1.1,Sterilization,0,0,0,0
+11.1.2,Other contraceptive and procreation management,0,0,0,0
+11.2.1,Spontaneous abortion,0,0,0,0
+11.2.2,Induced abortion,0,0,0,0
+11.2.3,Postabortion complications,1,0,1,0
+11.3.1,Ectopic pregnancy,0,0,0,0
+11.3.2.1,Placenta previa,0,0,0,0
+11.3.2.2,Abruptio placenta,0,0,0,0
+11.3.2.3,Other hemorrhage during pregnancy; childbirth and the puerperium,0,0,0,0
+11.3.3.1,Preeclampsia and eclampsia,3,3,2,2
+11.3.3.2,Other hypertension in pregnancy,0,0,0,0
+11.3.4.1,Threatened premature labor,0,0,0,0
+11.3.4.2,Early onset of delivery,0,0,0,0
+11.3.4.3,Other early or threatened labor,0,0,0,0
+11.3.5,Prolonged pregnancy,0,0,0,0
+11.3.6,Diabetes or abnormal glucose tolerance complicating pregnancy; childbirth; or the puerperium,0,0,0,0
+11.3.7.1,Infections of genitourinary tract during pregnancy,0,0,0,0
+11.3.7.2,Anemia during pregnancy,0,0,0,0
+11.3.7.4,Missed abortion,0,0,0,0
+11.3.7.5,Hyperemesis gravidarum,0,0,0,0
+11.3.7.6,Infectious and parasitic complications in mother affecting pregnancy,0,0,0,0
+11.3.7.7,Other and unspecified complications of pregnancy,7,2,3,0
+11.4.1.1,Breech presentation,0,0,0,0
+11.4.1.2,Other malposition; malpresentation,0,0,0,0
+11.4.2.1,Fetopelvic disproportion,0,0,0,0
+11.4.2.2,Other disproportion or obstruction,0,0,0,0
+11.4.3,Previous cesarean section,0,0,0,0
+11.4.4.1,Fetal distress,0,0,0,0
+11.4.4.2,Uterine inertia,0,0,0,0
+11.4.4.3,Precipitate labor,0,0,0,0
+11.4.4.4,Other abnormal forces of labor,0,0,0,0
+11.4.5.1,Premature rupture of membranes,0,0,0,0
+11.4.5.2,Infection of amniotic cavity,0,0,0,0
+11.4.5.3,Other problems of amniotic cavity,0,0,0,0
+11.5.1.1,Cord around neck with compression,0,0,0,0
+11.5.1.2,Other and unspecified cord entanglement with or without compression,0,0,0,0
+11.5.1.3,Other umbilical cord complications,0,0,0,0
+11.5.2.1,First degree perineal laceration,0,0,0,0
+11.5.2.2,Second degree perineal laceration,0,0,0,0
+11.5.2.3,Third degree perineal laceration,0,0,0,0
+11.5.2.4,Fourth degree perineal laceration,0,0,0,0
+11.5.2.5,Other perineal laceration and trauma,0,0,0,0
+11.5.3,Forceps delivery,0,0,0,0
+11.6,Other complications of birth; puerperium affecting management of mother,0,0,0,0
+11.6.1,Postpartum hemorrhage,0,0,0,0
+11.6.2,Complications of the puerperium,1,1,1,0
+11.6.3,Cervical incompetence,1,0,1,0
+11.6.4,Rhesus isoimmunization,0,0,0,0
+11.6.5,Intrauterine death,0,0,0,0
+11.6.6,Failed induction,0,0,0,0
+11.6.7,Other obstetrical trauma,0,0,0,0
+11.6.8,Other and unspecified complications of birth; puerperium affecting management of moth,3,1,1,0
+11.7.1,Normal delivery,0,0,0,0
+11.7.2,Multiple gestation,0,0,0,0
+11.7.3,Outcome of delivery (V codes),0,0,0,0
+12.1.1.1,Cellulitis and abscess of fingers and toes,0,0,0,0
+12.1.1.2,Cellulitis and abscess of face,0,0,0,0
+12.1.1.3,Cellulitis and abscess of arm,0,0,0,0
+12.1.1.4,Cellulitis and abscess of hand,0,0,0,0
+12.1.1.5,Cellulitis and abscess of leg,0,0,0,0
+12.1.1.6,Cellulitis and abscess of foot,0,0,0,0
+12.1.1.7,Other cellulitis and abscess,3,2,3,0
+12.1.2,Other skin and subcutaneous infections,16,10,7,2
+12.2,Other inflammatory condition of skin,49,24,26,5
+12.3.1,Decubitus ulcer,0,0,0,0
+12.3.2,Chronic ulcer of leg or foot,0,0,0,0
+12.3.3,Other chronic skin ulcer,0,0,0,0
+12.4,Other skin disorders,81,17,53,19
+13.1,Infective arthritis and osteomyelitis (except that caused by TB or STD),9,4,3,1
+13.2.1,Rheumatoid arthritis and related disease,13,2,7,3
+13.2.2.1,Osteoarthritis; localized,0,0,0,0
+13.2.2.2,Osteoarthritis; generalized and unspecified,0,0,0,0
+13.2.3,Other non-traumatic joint disorders,5,2,4,3
+13.3.1,Spondylosis and allied disorders,2,2,1,0
+13.3.2,Intervertebral disc disorders,0,0,0,0
+13.3.3.1,Cervical radiculitis,0,0,0,0
+13.3.3.2,Spinal stenosis; lumbar region,0,0,0,0
+13.3.3.3,Lumbago,0,0,0,0
+13.3.3.4,Sciatica,0,0,0,0
+13.3.3.5,Thoracic or lumbosacral neuritis or radiculitis; unspecified,0,0,0,0
+13.3.3.6,Backache; unspecified,0,0,0,0
+13.3.3.7,Other back pain and disorders,2,0,1,0
+13.4,Osteoporosis,0,0,0,0
+13.5,Pathological fracture,0,0,0,0
+13.6.1,Acquired foot deformities,0,0,0,0
+13.6.2,Other acquired deformities,2,0,2,1
+13.7,Systemic lupus erythematosus and connective tissue disorders,20,8,13,5
+13.8,Other connective tissue disease,32,8,19,7
+13.9,Other bone disease and musculoskeletal deformities,53,9,37,20
+14.1,Cardiac and circulatory congenital anomalies,0,0,0,0
+14.1.1,Transposition of great vessels,6,0,2,1
+14.1.10,Pulmonary artery anomalies,8,0,3,0
+14.1.11,Cerebrovascular anomalies,10,0,7,5
+14.1.12,Double outlet right ventricle,1,1,1,0
+14.1.13,Common ventricle,2,0,1,0
+14.1.14,Congenital insufficiency of aortic valve,2,2,0,0
+14.1.15,Hypoplastic left heart syndrome,2,2,1,1
+14.1.16,Gastrointestinal vessel congenital anomaly,7,0,2,1
+14.1.17,Persistent fetal circulation,1,1,0,0
+14.1.18,Other anomalies of bulbus cordis and cardiac septal closure,12,2,6,2
+14.1.19,Other heart valve congenital anomalies,11,5,2,1
+14.1.2,Tetralogy of Fallot,1,1,1,1
+14.1.20,Other congenital anomalies of the heart,36,5,10,3
+14.1.21,Other congenital anomalies of aorta,13,3,4,2
+14.1.22,Other circulatory congenital anomalies,34,2,10,5
+14.1.3,Ventricular septal defect,1,1,1,0
+14.1.4,Atrial septal defect,1,1,1,0
+14.1.5,Endocardial cushion defects,1,1,0,0
+14.1.6,Pulmonary valve atresia and stenosis,4,1,1,0
+14.1.7,Aortic valve stenosis,4,1,1,0
+14.1.8,Patent ductus arteriosus,1,1,0,0
+14.1.9,Coarctation of aorta,1,1,1,0
+14.2,Digestive congenital anomalies,0,0,0,0
+14.2.1,Esophageal atresia/tracheoesophageal fistula,2,0,2,0
+14.2.2,Pyloric stenosis,0,0,0,0
+14.2.3,Rectal and large intestine atresia/stenosis,2,1,2,0
+14.2.4,Hirshsprungs disease,1,1,1,1
+14.2.5,'Meckel's diverticulum',0,0,0,0
+14.2.6,Atresia and stenosis of small intestine,2,0,2,0
+14.2.7,Anomalies of intestinal fixation,0,0,0,0
+14.2.8,Other upper gastrointestinal congenital anomalies,17,1,5,2
+14.2.9,Other lower gastrointestinal congenital anomalies,19,5,13,7
+14.3,Genitourinary congenital anomalies,0,0,0,0
+14.3.1,Undescended testicle,0,0,0,0
+14.3.2,Hypospadias and epispadias,2,1,2,1
+14.3.3,Obstructive genitourinary defect,6,0,1,0
+14.3.4,Polycystic kidney,2,0,2,2
+14.3.5,Other cystic kidney disease,20,1,18,16
+14.3.6,Embyronic cyst of fallopian tubes and broad ligaments,0,0,0,0
+14.3.7,Other congenital anomalies of genitalia,43,3,23,12
+14.3.8,Other congenital anomalies of urinary system,24,5,15,5
+14.4,Nervous system congenital anomalies,0,0,0,0
+14.4.1,Spina bifida,9,0,3,0
+14.4.2,Congenital hydrocephalus,9,1,4,1
+14.4.3,Other spinal cord congenital anomalies,6,1,1,0
+14.4.4,Microcephalus,0,0,0,0
+14.4.5,Other nervous system congenital anomalies,138,9,89,56
+14.5.1,Cleft palate without cleft lip,6,2,6,5
+14.5.10,Congenital hip dislocation,0,0,0,0
+14.5.11,Polydactyly (extra digits) and syndactyly (webbing between digits),31,0,17,12
+14.5.12,Congenital absence of lower limb,18,6,2,1
+14.5.13,Congenital hip deformity,1,0,1,1
+14.5.14,Other congenital anomalies of limbs,268,4,206,106
+14.5.15,Congenital anomalies of skull and facial bones,22,2,19,10
+14.5.16,Lumbosacral spondylolysis,0,0,0,0
+14.5.17,Spondylolisthesis,0,0,0,0
+14.5.18,Other spinal congenital anomalies,4,1,3,3
+14.5.19,Osteogenesis imperfecta,1,1,1,0
+14.5.2,Cleft lip with or without cleft palate,5,0,4,3
+14.5.20,Congenital anomalies of the diaphragm,2,1,1,1
+14.5.21,Congenital anomalies of abdominal wall,4,2,4,1
+14.5.22,Congenital pigmentary anomalies of skin,15,2,10,7
+14.5.23,Other congenital anomalies of integument,203,11,158,110
+14.5.24,Pectus excavatum,0,0,0,0
+14.5.25,'Down's Syndrome',1,1,1,0
+14.5.26,All other congenital anomalies,1076,26,944,485
+14.5.3,Congenital anomalies of the eye,126,5,85,66
+14.5.4,Microtia (incomplete development of external ear),1,1,1,1
+14.5.5,Branchial cleft cyst or fistula,5,0,1,0
+14.5.6,Other face and neck congenital anomalies,20,1,5,4
+14.5.7,Congenital anomalies of larynx trachea and bronchus,16,4,9,0
+14.5.8,Other respiratory congenital anomalies,57,2,42,31
+14.5.9,Foot deformities,9,1,3,3
+15.1,Liveborn,0,0,0,0
+15.2,Short gestation; low birth weight; and fetal growth retardation,0,0,0,0
+15.3,Intrauterine hypoxia and birth asphyxia,1,0,0,0
+15.4,Respiratory distress syndrome,1,1,0,0
+15.5,Hemolytic jaundice and perinatal jaundice,10,2,5,1
+15.6,Birth trauma,2,1,0,0
+15.7,Other perinatal conditions,4,1,3,1
+15.7.1,Respiratory conditions of fetus and newborn; other than respiratory distress,2,1,1,0
+15.7.2,Infections specific to the perinatal period,11,4,8,0
+15.7.3,Endocrine and metabolic disturbances of fetus and newborn,10,2,3,0
+15.7.4,Other and unspecified perinatal conditions,41,7,32,10
+16.1,Joint disorders and dislocations; trauma-related,1,1,1,0
+16.10.1,Complication of device; implant or graft,0,0,0,0
+16.10.1.1,Malfunction of device; implant; and graft,0,0,0,0
+16.10.1.2,Infection and inflammation--internal prosthetic device; implant; and graft,0,0,0,0
+16.10.1.3,Other complications of internal prosthetic device; implant; and graft,0,0,0,0
+16.10.1.4,Complications of transplants and reattached limbs,8,3,3,1
+16.10.2,Complications of surgical procedures or medical care,0,0,0,0
+16.10.2.1,Cardiac complications,0,0,0,0
+16.10.2.2,Respiratory complications,0,0,0,0
+16.10.2.3,Gastrointestinal complications,2,1,2,0
+16.10.2.4,Urinary complications,0,0,0,0
+16.10.2.5,Hemorrhage or hematoma complicating a procedure,0,0,0,0
+16.10.2.6,Postoperative infection,0,0,0,0
+16.10.2.7,Other complications of surgical and medical procedures,5,1,3,2
+16.11.1,Poisoning by psychotropic agents,1,0,0,0
+16.11.2,Poisoning by other medications and drugs,7,0,2,0
+16.11.3,Poisoning by nonmedicinal substances,16,2,8,0
+16.12,Other injuries and conditions due to external causes,8,1,3,1
+16.2.1,Fracture of neck of femur (hip),0,0,0,0
+16.2.2,Skull and face fractures,0,0,0,0
+16.2.3,Fracture of upper limb,0,0,0,0
+16.2.3.1,Fracture of humerus,0,0,0,0
+16.2.3.2,Fracture of radius and ulna,0,0,0,0
+16.2.3.3,Other fracture of upper limb,0,0,0,0
+16.2.4,Fracture of lower limb,0,0,0,0
+16.2.4.1,Fracture of tibia and fibula,0,0,0,0
+16.2.4.2,Fracture of ankle,0,0,0,0
+16.2.4.3,Other fracture of lower limb,0,0,0,0
+16.2.5,Other fractures,0,0,0,0
+16.2.5.1,Fracture of vertebral column without mention of spinal cord injury,0,0,0,0
+16.2.5.2,Fracture of ribs; closed,0,0,0,0
+16.2.5.3,Fracture of pelvis,0,0,0,0
+16.2.5.4,Other and unspecified fracture,0,0,0,0
+16.3,Spinal cord injury,0,0,0,0
+16.4,Intracranial injury,0,0,0,0
+16.4.1,Concussion,0,0,0,0
+16.4.2,Other intracranial injury,0,0,0,0
+16.5,Crushing injury or internal injury,0,0,0,0
+16.6.1,Open wounds of head; neck; and trunk,0,0,0,0
+16.6.2,Open wounds of extremities,0,0,0,0
+16.7,Sprains and strains,0,0,0,0
+16.8,Superficial injury; contusion,0,0,0,0
+16.9,Burns,0,0,0,0
+17.1.1,Syncope,0,0,0,0
+17.1.2,Fever of unknown origin,0,0,0,0
+17.1.3,Lymphadenitis,1,0,1,0
+17.1.4,Gangrene,0,0,0,0
+17.1.5,Shock,1,1,1,0
+17.1.6,Nausea and vomiting,0,0,0,0
+17.1.7,Abdominal pain,0,0,0,0
+17.1.8,Malaise and fatigue,1,0,0,0
+17.1.9,Allergic reactions,13,6,11,4
+17.2.1,Rehabilitation care; fitting of prostheses; and adjustment of devices,0,0,0,0
+17.2.2,Administrative/social admission,0,0,0,0
+17.2.3,Medical examination/evaluation,0,0,0,0
+17.2.4,Other aftercare,33,3,15,3
+17.2.5,Other screening for suspected conditions (not mental disorders or infectious disease),0,0,0,0
+18,Residual codes; unclassified; all E codes,6,2,2,2
+2.1.1,Cancer of colon,2,1,0,0
+2.1.2,Cancer of rectum and anus,1,0,0,0
+2.10.1,Hodgkins disease,7,4,2,1
+2.10.2,Non-Hodgkins lymphoma,37,18,9,7
+2.10.3,Leukemias,37,20,10,6
+2.10.4,Multiple myeloma,6,3,2,1
+2.11.1,Cancer of head and neck,38,27,0,0
+2.11.2,Cancer; other respiratory and intrathoracic,0,0,0,0
+2.11.3,Cancer of bone and connective tissue,35,6,18,13
+2.11.4,Cancer of brain and nervous system,37,8,3,1
+2.11.5,Cancer of thyroid,4,4,2,2
+2.11.6,Cancer; other and unspecified primary,28,12,10,6
+2.12.1,Secondary malignancy of lymph nodes,0,0,0,0
+2.12.2,Secondary malignancy of lung,0,0,0,0
+2.12.3,Secondary malignancy of liver,0,0,0,0
+2.12.4,Secondary malignancy of brain/spine,0,0,0,0
+2.12.5,Secondary malignancy of bone,0,0,0,0
+2.12.6,Other secondary malignancy,5,0,1,0
+2.13,Malignant neoplasm without specification of site,0,0,0,0
+2.14,Neoplasms of unspecified nature or uncertain behavior,64,14,36,21
+2.15.1,Radiotherapy,0,0,0,0
+2.15.2,Chemotherapy,0,0,0,0
+2.16.1,Benign neoplasm of uterus,4,3,1,0
+2.16.2.1,Benign neoplasm of ovary,9,0,2,0
+2.16.2.2,Benign neoplasm of colon,18,1,17,13
+2.16.2.3,Benign neoplasm of the thyroid,1,1,0,0
+2.16.2.4,Benign neoplasm of cerebral meninges,3,1,1,1
+2.16.2.5,Other and unspecified benign neoplasms,50,6,20,9
+2.2.1,Cancer of esophagus,6,2,3,2
+2.2.2,Cancer of stomach,11,4,1,1
+2.2.3,Cancer of liver and intrahepatic bile duct,10,5,2,1
+2.2.4,Cancer of pancreas,11,2,1,0
+2.2.5,Cancer of other GI organs; peritoneum,19,8,4,4
+2.3,Cancer of bronchus; lung,7,0,3,2
+2.4.1,Melanomas of skin,1,0,1,1
+2.4.2,Other non-epithelial cancer of skin,7,3,4,2
+2.5,Cancer of breast,4,0,1,1
+2.6.1,Cancer of uterus,12,0,0,0
+2.6.2,Cancer of cervix,14,0,0,0
+2.7.1,Cancer of ovary,0,0,0,0
+2.7.2,Cancer of other female genital organs,6,4,0,0
+2.8.1,Cancer of prostate,0,0,0,0
+2.8.2,Cancer of testis,7,0,1,1
+2.8.3,Cancer of other male genital organs,6,3,0,0
+2.9.1,Cancer of bladder,3,1,1,0
+2.9.2,Cancer of kidney and renal pelvis,17,0,4,3
+2.9.3,Cancer of other urinary organs,2,1,0,0
+3.1.1,Thyrotoxicosis with or without goiter,3,0,3,3
+3.1.2,Other thyroid disorders,30,1,23,19
+3.10,Immunity disorders,88,12,64,56
+3.11.1,Disorders of mineral metabolism,32,3,17,13
+3.11.2,Obesity,9,0,9,9
+3.11.3,Other and unspecified metabolic; nutritional; and endocrine disorders,670,80,504,441
+3.2,Diabetes mellitus without complication,2,0,1,1
+3.3.1,Diabetes with ketoacidosis or uncontrolled diabetes,0,0,0,0
+3.3.2,Diabetes with renal manifestations,1,0,1,1
+3.3.3,Diabetes with ophthalmic manifestations,0,0,0,0
+3.3.4,Diabetes with neurological manifestations,0,0,0,0
+3.3.5,Diabetes with circulatory manifestations,0,0,0,0
+3.3.6,Diabetes with unspecified complications,6,0,6,5
+3.3.7,Diabetes with other manifestations,0,0,0,0
+3.4,Other endocrine disorders,139,16,96,68
+3.5.1,Unspecified protein-calorie malnutrition,0,0,0,0
+3.5.2,Other malnutrition,30,1,24,20
+3.6,Disorders of lipid metabolism,14,1,12,11
+3.7,Gout and other crystal arthropathies,4,0,3,2
+3.8.1,Hyposmolality,0,0,0,0
+3.8.2,Hypovolemia,0,0,0,0
+3.8.3,Hyperpotassemia,0,0,0,0
+3.8.4,Hypopotassemia,0,0,0,0
+3.8.5,Other fluid and electrolyte disorders,4,0,1,1
+3.9,Cystic fibrosis,1,1,1,1
+4.1.1,Acute posthemorrhagic anemia,0,0,0,0
+4.1.2,Sickle cell anemia,2,1,1,1
+4.1.3.1,Iron deficiency anemia,3,1,3,2
+4.1.3.2,Other deficiency anemia,7,3,5,4
+4.1.3.3,Aplastic anemia,9,2,5,4
+4.1.3.4,Chronic blood loss anemia,0,0,0,0
+4.1.3.5,Acquired hemolytic anemia,10,3,7,1
+4.1.3.6,Other specified anemia,64,10,44,39
+4.1.3.7,Anemia; unspecified,0,0,0,0
+4.2.1,Coagulation defects,39,9,28,25
+4.2.2,Thrombocytopenia,16,2,11,9
+4.2.3,Other coagulation and hemorrhagic disorders,22,1,16,11
+4.3,Diseases of white blood cells,30,4,20,10
+4.4,Other hematologic conditions,10,9,3,2
+5.1,Adjustment disorders,0,0,0,0
+5.10,Schizophrenia and other psychotic disorders,2,0,0,0
+5.11,Alcohol-related disorders,2,2,1,0
+5.12,Substance-related disorders,1,0,0,0
+5.13,Suicide and intentional self-inflicted injury,0,0,0,0
+5.14.1,Codes related to mental health disorders,1,1,1,0
+5.14.2,Codes related to substance-related disorders,0,0,0,0
+5.15.1,Dissociative disorders,1,0,0,0
+5.15.2,Eating disorders,0,0,0,0
+5.15.3,Factitious disorders,1,0,0,0
+5.15.4,Psychogenic disorders,0,0,0,0
+5.15.5,Sexual and gender identity disorders,0,0,0,0
+5.15.6,Sleep disorders,3,1,1,0
+5.15.7,Somatoform disorders,2,0,1,0
+5.15.8,Mental disorders due to general medical conditions not elsewhere classified,1,1,0,0
+5.15.9,Other miscellaneous mental conditions,0,0,0,0
+5.2,Anxiety disorders,0,0,0,0
+5.3.1,Conduct disorder,0,0,0,0
+5.3.2,Oppositional defiant disorder,0,0,0,0
+5.3.3,Attention deficit disorder and Attention deficit hyperactivity disorder,0,0,0,0
+5.4,Delirium dementia and amnestic and other cognitive disorders,37,3,33,28
+5.5.1,Communication disorders,0,0,0,0
+5.5.2,Developmental disabilities,0,0,0,0
+5.5.3,Intellectual disabilities,1,0,1,1
+5.5.4,Learning disorders,0,0,0,0
+5.5.5,Motor skill disorders,0,0,0,0
+5.6.1,Elimination disorders,0,0,0,0
+5.6.2,Other disorders of infancy  childhood  or adolescence,1,0,1,0
+5.6.3,Pervasive developmental disorders,5,1,4,3
+5.6.4,Tic disorders,0,0,0,0
+5.7,Impulse control disorders not elsewhere classified,0,0,0,0
+5.8.1,Bipolar disorders,0,0,0,0
+5.8.2,Depressive disorders,0,0,0,0
+5.9,Personality disorders,0,0,0,0
+6.1.1,Meningitis (except that caused by TB or STD),16,9,5,0
+6.1.2,Encephalitis (except that caused by TB or STD),34,15,11,0
+6.1.3,Other CNS infection and poliomyelitis,18,8,9,5
+6.2.1,Parkinsons disease,0,0,0,0
+6.2.2,Multiple sclerosis,0,0,0,0
+6.2.3.1,Disorders of the autonomic nervous system,9,0,4,3
+6.2.3.2,Other and unspecified hereditary and degenerative nervous conditions,315,27,254,206
+6.3.1,Hemiplegia,0,0,0,0
+6.3.2,Other paralysis,6,4,3,0
+6.4.1,Epilepsy,80,2,51,39
+6.4.2,Convulsions,0,0,0,0
+6.5.1,Migraine,7,4,2,1
+6.5.2,Other headache,5,2,2,0
+6.6,Coma; stupor; and brain damage,0,0,0,0
+6.7.1,Cataract,3,0,2,2
+6.7.2.1,Retinal detachment with defect,0,0,0,0
+6.7.2.2,Other retinal detachment or defect,1,0,0,0
+6.7.2.3,Other retinal disorders,19,8,9,6
+6.7.3,Glaucoma,2,0,0,0
+6.7.4,Blindness and vision defects,9,3,7,5
+6.7.5,Inflammation; infection of eye (except that caused by TB or STD),50,26,11,3
+6.7.6,Other eye disorders,75,15,41,29
+6.8.1.1,Suppurative and unspecified otitis media,0,0,0,0
+6.8.1.2,Other otitis media and related conditions,4,3,1,0
+6.8.2,Conditions associated with dizziness or vertigo,5,2,3,0
+6.8.3,Other ear and sense organ disorders,143,1,137,98
+6.9,Other nervous system disorders,68,4,51,43
+6.9.1,Disorders of the peripheral nervous system,150,27,94,67
+6.9.2,Other central nervous system disorders,63,9,53,33
+6.9.3,Other nervous system symptoms and disorders,1,1,0,0
+7.1.1,Essential hypertension,0,0,0,0
+7.1.2.1,Hypertensive heart and/or renal disease,0,0,0,0
+7.1.2.2,Other hypertensive complications,9,0,9,6
+7.2.1.1,Chronic rheumatic disease of the heart valves,0,0,0,0
+7.2.1.2,Nonrheumatic mitral valve disorders,1,0,0,0
+7.2.1.3,Nonrheumatic aortic valve disorders,0,0,0,0
+7.2.1.4,Other heart valve disorders,2,1,2,2
+7.2.10,Cardiac arrest and ventricular fibrillation,1,0,1,1
+7.2.11,Congestive heart failure; nonhypertensive,0,0,0,0
+7.2.11.1,Congestive heart failure,0,0,0,0
+7.2.11.2,Heart failure,0,0,0,0
+7.2.2.1,Cardiomyopathy,31,2,20,13
+7.2.2.2,Other peri-; endo-; and myocarditis,13,8,4,2
+7.2.3,Acute myocardial infarction,0,0,0,0
+7.2.4,Coronary atherosclerosis and other heart disease,0,0,0,0
+7.2.4.1,Angina pectoris,0,0,0,0
+7.2.4.2,Unstable angina (intermediate coronary syndrome),0,0,0,0
+7.2.4.3,Other acute and subacute forms of ischemic heart disease,0,0,0,0
+7.2.4.4,Coronary atherosclerosis,0,0,0,0
+7.2.4.5,Other forms of chronic heart disease,0,0,0,0
+7.2.5,Nonspecific chest pain,0,0,0,0
+7.2.6,Pulmonary heart disease,7,2,4,0
+7.2.7,Other and ill-defined heart disease,2,1,2,0
+7.2.8.1,Atrioventricular block,0,0,0,0
+7.2.8.2,Bundle branch block,0,0,0,0
+7.2.8.3,Anomalous atrioventricular excitation,2,0,2,1
+7.2.8.4,Other conduction disorders,19,1,16,16
+7.2.9.1,Paroxysmal supraventricular tachycardia,2,0,2,0
+7.2.9.2,Paroxysmal ventricular tachycardia,0,0,0,0
+7.2.9.3,Atrial fibrillation,1,0,1,1
+7.2.9.4,Atrial flutter,1,0,1,1
+7.2.9.5,Premature beats,0,0,0,0
+7.2.9.6,Sinoatrial node dysfunction,0,0,0,0
+7.2.9.7,Other cardiac dysrhythmias,15,0,11,11
+7.3.1.1,Intracranial hemorrhage,2,0,2,1
+7.3.1.2,Occlusion of cerebral arteries,1,0,0,0
+7.3.1.3,Acute but ill-defined cerebrovascular accident,3,1,1,0
+7.3.2,Occlusion or stenosis of precerebral arteries,0,0,0,0
+7.3.3,Other and ill-defined cerebrovascular disease,10,3,6,2
+7.3.4,Transient cerebral ischemia,2,0,1,0
+7.3.5,Late effects of cerebrovascular disease,1,0,1,0
+7.4.1.1,Atherosclerosis of arteries of extremities,0,0,0,0
+7.4.1.2,Peripheral vascular disease unspecified,0,0,0,0
+7.4.1.3,Other peripheral and visceral atherosclerosis,1,1,1,0
+7.4.2,Aortic; peripheral; and visceral artery aneurysms,0,0,0,0
+7.4.2.1,Abdominal aortic aneurysm; without rupture,3,0,2,1
+7.4.2.2,Other aneurysm,5,0,4,2
+7.4.3,Aortic and peripheral arterial embolism or thrombosis,0,0,0,0
+7.4.3.1,Arterial embolism and thrombosis of lower extremity artery,0,0,0,0
+7.4.3.2,Other arterial embolism and thrombosis,0,0,0,0
+7.4.4.1,Hypotension,0,0,0,0
+7.4.4.2,Other and unspecified circulatory disease,29,10,23,11
+7.5.1.1,Phlebitis and thrombophlebitis,5,2,0,0
+7.5.1.2,Other venous embolism and thrombosis,2,2,1,1
+7.5.2,Varicose veins of lower extremity,0,0,0,0
+7.5.3,Hemorrhoids,0,0,0,0
+7.5.4,Other diseases of veins and lymphatics,9,1,4,0
+8.1.1.1,Pneumococcal pneumonia,0,0,0,0
+8.1.1.2,Other bacterial pneumonia,13,9,7,0
+8.1.1.3,Pneumonia; organism unspecified,0,0,0,0
+8.1.1.4,Other pneumonia,7,6,4,0
+8.1.2,Influenza,1,0,1,0
+8.1.3,Acute and chronic tonsillitis,0,0,0,0
+8.1.4,Acute bronchitis,0,0,0,0
+8.1.5.1,Acute upper respiratory infections of multiple or unspecified sites,0,0,0,0
+8.1.5.2,Chronic sinusitis,0,0,0,0
+8.1.5.3,Croup,0,0,0,0
+8.1.5.4,Other and unspecified upper respiratory infections,3,3,0,0
+8.2.1,Emphysema,0,0,0,0
+8.2.2,Chronic airway obstruction; not otherwise specified,0,0,0,0
+8.2.3,Obstructive chronic bronchitis,0,0,0,0
+8.2.4,Other chronic pulmonary disease,0,0,0,0
+8.3.1.1,Chronic obstructive asthma without status asthmaticus or exacerbation,0,0,0,0
+8.3.1.2,Chronic obstructive asthma with status asthmaticus,0,0,0,0
+8.3.1.3,Chronic obstructive asthma with acute exacerbation,0,0,0,0
+8.3.2.1,Other asthma without status asthmaticus or exacerbation,0,0,0,0
+8.3.2.2,Other asthma with status asthmaticus,0,0,0,0
+8.3.2.3,Other asthma with acute exacerbation,0,0,0,0
+8.4,Aspiration pneumonitis; food/vomitus,0,0,0,0
+8.5.1,Pleurisy; pleural effusion,0,0,0,0
+8.5.2,Pulmonary collapse; interstitial and compensatory emphysema,0,0,0,0
+8.5.3,Empyema and pneumothorax,2,0,1,1
+8.6,Respiratory failure; insufficiency; arrest (adult),0,0,0,0
+8.6.1,Respiratory failure,0,0,0,0
+8.6.2,Other respiratory insufficiency,0,0,0,0
+8.7,Lung disease due to external agents,20,7,4,1
+8.8.1,Postinflammatory pulmonary fibrosis,11,0,6,2
+8.8.2,Painful respiration,0,0,0,0
+8.8.3,Other and unspecified lower respiratory disease,40,18,25,10
+8.9,Other upper respiratory disease,9,0,5,0
+9.1,Intestinal infection,24,11,14,0
+9.10.1,Hemorrhage from gastrointestinal ulcer,0,0,0,0
+9.10.2,Melena,0,0,0,0
+9.10.3,Gastroesophageal laceration syndrome,1,1,0,0
+9.10.4,Other esophageal bleeding,0,0,0,0
+9.10.5,Hemorrhage of rectum and anus,0,0,0,0
+9.10.6,Hematemesis,0,0,0,0
+9.10.7,Hemorrhage of gastrointestinal tract,0,0,0,0
+9.11,Noninfectious gastroenteritis,4,1,1,0
+9.12,Other gastrointestinal disorders,1,0,1,0
+9.12.1,Constipation,0,0,0,0
+9.12.2,Dysphagia,0,0,0,0
+9.12.3,Other and unspecified gastrointestinal disorders,10,1,6,4
+9.2,Disorders of teeth and jaw,39,2,33,24
+9.3,Diseases of mouth; excluding dental,4,1,3,0
+9.4.1.1,Esophagitis,1,1,0,0
+9.4.1.2,Other esophageal disorders,0,0,0,0
+9.4.2.1,Gastric ulcer,0,0,0,0
+9.4.2.2,Duodenal ulcer,0,0,0,0
+9.4.2.3,Peptic ulcer; site unspecified,0,0,0,0
+9.4.2.4,Gastrojejunal ulcer,0,0,0,0
+9.4.3.1,Acute gastritis,0,0,0,0
+9.4.3.2,Other specified gastritis,6,1,2,0
+9.4.3.3,Unspecified gastritis and gastroduodenitis,0,0,0,0
+9.4.3.4,Duodenitis,0,0,0,0
+9.4.4,Other disorders of stomach and duodenum,0,0,0,0
+9.5.1.1,Inguinal hernia with obstruction or gangrene,0,0,0,0
+9.5.1.2,Inguinal hernia without obstruction or gangrene,0,0,0,0
+9.5.2,Diaphragmatic hernia,1,0,1,1
+9.5.3.1,Femoral hernia with obstruction/gangrene,0,0,0,0
+9.5.3.2,Femoral hernia without obstruction/gangrene,0,0,0,0
+9.5.3.3,Umbilical hernia with obstruction/gangrene,0,0,0,0
+9.5.3.4,Umbilical hernia without obstruction/gangrene,0,0,0,0
+9.5.3.5,Ventral hernia with obstruction/gangrene,1,0,0,0
+9.5.3.6,Ventral hernia without obstruction/gangrene,0,0,0,0
+9.5.3.7,Incisional hernia with obstruction/gangrene,0,0,0,0
+9.5.3.8,Incisional hernia without obstruction/gangrene,0,0,0,0
+9.5.3.9,Other and unspecified hernia,0,0,0,0
+9.6.1.1,Acute appendicitis with abscess or peritonitis,0,0,0,0
+9.6.1.2,Acute appendicitis without abscess or peritonitis,0,0,0,0
+9.6.1.3,Acute appendicitis; not otherwise specified,0,0,0,0
+9.6.1.4,Other appendiceal conditions,0,0,0,0
+9.6.2,Regional enteritis and ulcerative colitis,0,0,0,0
+9.6.3.1,Paralytic ileus,0,0,0,0
+9.6.3.2,Impaction of intestine,0,0,0,0
+9.6.3.3,Peritoneal or intestinal adhesions,0,0,0,0
+9.6.3.4,Other intestinal obstruction,0,0,0,0
+9.6.4.1,Diverticulosis,0,0,0,0
+9.6.4.2,Diverticulitis,0,0,0,0
+9.6.5,Anal and rectal conditions,2,2,2,0
+9.6.6,Peritonitis and intestinal abscess,1,0,0,0
+9.7.1,Cholelithiasis with acute cholecystitis,0,0,0,0
+9.7.2,Cholelithiasis with other cholecystitis,0,0,0,0
+9.7.3,Cholelithiasis without mention of cholecystitis,0,0,0,0
+9.7.4,Calculus of bile duct,0,0,0,0
+9.7.5,Cholecystitis without cholelithiasis,0,0,0,0
+9.7.6,Other biliary tract disease,4,0,3,2
+9.8.2.1,Cirrhosis of liver without mention of alcohol,3,0,2,0
+9.8.2.2,Liver abscess and sequelae of chronic liver disease,17,0,12,8
+9.8.2.3,Ascites,0,0,0,0
+9.8.2.4,Other and unspecified liver disorders,25,2,19,11
+9.9.1,Acute pancreatitis,0,0,0,0
+9.9.2,Chronic pancreatitis,5,0,2,2
+9.9.3,Other pancreatic disorders,0,0,0,0
