@@ -1,0 +1,33 @@
+\begin{tabular}{lllr}
+\toprule
+family & model & description & block appl.\\
+\midrule
+baseline & \texttt{label\_prior} & training label frequencies & 0\\
+ & \texttt{bag\_of\_codes} & code counts of the history + MLP & 0\\
+\midrule
+recurrent & \texttt{gru} & GRU over sum-pooled visits & 0\\
+ & \texttt{retain} & RETAIN & 0\\
+\midrule
+transformer & \texttt{transformer} & MedCo backbone (1 layer per modality, concat) & 1\\
+ & \texttt{transformer\_pos\_last} & + visit positions, last-visit readout & 1\\
+ & \texttt{transformer\_setpool} & + attention pooling within visits & 1\\
+ & \texttt{transformer\_cross} & + cross-modality attention & 1\\
+ & \texttt{transformer\_logitadj} & + logit-adjusted loss & 1\\
+\midrule
+knowledge & \texttt{gram} & GRAM ontology embeddings (CCS, ATC) & 1\\
+ & \texttt{knowledge\_rag\_readout} & RAG-initialised embeddings + knowledge readout & 1\\
+\midrule
+deep & \texttt{deep\_L2} & 2 distinct layers & 2\\
+ & \texttt{deep\_L4} & 4 distinct layers & 4\\
+\midrule
+looped & \texttt{loop\_T4} & 1 layer applied 4 times & 4\\
+ & \texttt{layerloop\_L2T2} & layer loop: L1 L1 L2 L2 & 4\\
+ & \texttt{modelloop\_L2T2} & model loop: L1 L2 L1 L2 & 4\\
+\midrule
+adaptive & \texttt{deep\_L4\_adaptive} & 4 distinct layers, exit after any layer & 4\\
+ & \texttt{loop\_T4\_adaptive} & loop T4, geometric depth prior, post-hoc exit & 4\\
+ & \texttt{loop\_T4\_gate} & loop T4, PonderNet gate & 4\\
+ & \texttt{layerloop\_L2T2\_adaptive} & layer loop, geometric depth prior, post-hoc exit & 4\\
+ & \texttt{modelloop\_L2T2\_adaptive} & model loop, geometric depth prior, post-hoc exit & 4\\
+\bottomrule
+\end{tabular}

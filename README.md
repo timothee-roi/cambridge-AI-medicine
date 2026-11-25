@@ -21,6 +21,9 @@ notebooks/
   07_backbone_ablations.ipynb     fusion of the three encoders (concat / sum / cross-attention), set pooling
   08_rare_code_analysis.ipynb     per-label diagnostics: frequency, recurrence, diversity, geometry, MedCo groups
   09_mimic_code_audit.ipynb       GEM artefact on MIMIC-IV diagnosis rows, rare-disease codes vs label rarity  [run]
+  10_benchmark.ipynb              THE BENCHMARK: 21 models (baselines, RNNs, Transformers, GRAM, knowledge/RAG,
+                                  deep, looped: layer loop vs model loop, adaptive depth); trains missing runs,
+                                  aggregates, writes the LaTeX tables of the report
 src/rarepred/                     data loading, models, metrics, training, resources, knowledge retrieval
 scripts/                          Slurm scripts for the HubIA DGX, download of public resources, report figures
 results/                          measured results (JSON/CSV); no patient-level data
@@ -44,7 +47,22 @@ local machine and are summarised in the report; they still need to be added unde
 | Looped Transformer | 03 | corrected (dropout on the recurrent state), rerun pending |
 | Per-label diagnostics on the converged model | 08 | implemented, tested end to end on synthetic data |
 
-## Running on the HubIA DGX
+## Running the benchmark on the HubIA DGX
+
+```bash
+cd ~/cambridge_project
+python scripts/relabel_gem.py --processed processed --hosp data/hosp --out processed_gemfix   # corrected labels, once
+mkdir -p logs && sbatch scripts/benchmark.sbatch                    # 21 models x seed 42, 4 jobs at a time
+SEED=123 sbatch scripts/benchmark.sbatch && SEED=7 sbatch scripts/benchmark.sbatch
+MODELS="transformer" PROCESSED=processed OUT=results/benchmark/original sbatch --array=0-0 scripts/benchmark.sbatch
+# when the jobs are done: aggregate and write the paper tables
+cd notebooks && BENCH_TRAIN=0 BENCH_SEEDS=42,123,7 papermill 10_benchmark.ipynb executed/10_benchmark.ipynb
+cd ../report && latexmk -pdf main.tex
+```
+`knowledge_rag_readout` needs `processed_gemfix/knowledge_embeddings_BioLORD-2023.npz` (Notebook 5 with
+`RAREPRED_PROCESSED=processed_gemfix`); without it the job for that model fails and the others are unaffected.
+
+## Running the analysis notebooks on the HubIA DGX
 
 ```bash
 # once, on a machine with internet access (public resources only)

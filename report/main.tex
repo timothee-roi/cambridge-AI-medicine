@@ -25,8 +25,8 @@
 \newcommand{\pending}{\textcolor{gray}{--}}
 \newcommand{\nb}[1]{\texttt{#1}}
 
-\title{\textbf{Improving next-visit diagnosis prediction for rare diseases on MIMIC-IV}\\[4pt]
-\large Diagnostic results, a study of the label space, and an experimental programme}
+\title{\textbf{Benchmarking next-visit diagnosis prediction for rare labels on MIMIC-IV}\\[4pt]
+\large Classic, Transformer, knowledge-based, looped and adaptive-depth models under one protocol}
 % Co-authors to be confirmed: P. Li\`o, A. Dussolle, C. d'Ercoli, C. Bernard, A. Popescu.
 \author{Timoth\'ee Roina\\
 \small Pietro Li\`o group, Department of Computer Science and Technology, University of Cambridge}
@@ -36,59 +36,49 @@
 \maketitle
 
 \begin{abstract}
-Models that predict the diagnoses of a patient's next hospital admission perform much worse on rare labels than
-on frequent ones, and recent concept encoders that enrich code embeddings with ontologies and large language
-models (LLMs) narrow this gap only slightly. This report collects what we have measured so far on MIMIC-IV
-and sets out the experiments that follow from it. Our reimplementation of the shared Transformer backbone
-reaches a test sample-AUPRC of 0.471, with 0.290 on the rarest quarter of the 572 CCS labels and 0.543 on the
-most frequent quarter. Before testing remedies we examined what a ``rare'' label is in this task. Linking the
-Mondo Disease Ontology to the label space through the same mapping as our preprocessing shows that only 37\%
-of the 16,370 rare diseases in Mondo (62\% of the 6,331 that Orphanet classifies as rare) can reach a CCS label
-at all, and those that do are concentrated in residual categories: ``All other congenital anomalies'' alone
-receives 1,076 of them. In the MIMIC-IV diagnosis table, patients carrying a code that is exactly equivalent to
-an Orphanet rare disease fall mostly into frequent labels, where they are a small minority. The audit also
-exposed a mapping artefact that affects 10.7\% of ICD-10 diagnosis rows and changes the patient count of 30
-labels by at least 25\% (ICD-10 essential hypertension, for instance, is labelled as a hypertensive
-complication), and showed that the frequency groups used by the main baseline we compare against are not the
-equal-size quartiles we had assumed. We then describe four interventions, each implemented and tested end to
-end on synthetic data and ready to run on the cluster: knowledge-initialised code embeddings from a biomedical
-text encoder, retrieval of rare-disease knowledge (Mondo, HPO phenotypes, genes) into those embeddings and into
-the classifier, alternative fusions of the three modality encoders, and looped Transformers with adaptive
-depth. Results that do not exist yet are marked as such; no number in this report is projected.
+Models that predict the diagnoses of a patient's next hospital admission are much weaker on rare labels than on
+frequent ones, and each new method reports its gains under its own preprocessing, label space, frequency groups
+and training protocol. Before proposing yet another architecture for rare diseases, we need to know where the
+existing ones stand on equal terms. We therefore benchmark 21 models on MIMIC-IV under a single protocol: simple
+baselines (label prior, bag of codes), recurrent models (GRU, RETAIN), the Transformer backbone shared by recent
+concept encoders and four of its variants (visit positions, attention pooling within visits, cross-modality
+attention, logit adjustment), knowledge-based embeddings (GRAM; text embeddings with retrieval of rare-disease
+knowledge), deeper Transformers, and looped Transformers with and without adaptive depth. For looped models we
+compare, at equal parameters and equal compute, a \emph{layer loop} (each layer repeated before the next) with a
+\emph{model loop} (the whole stack repeated). Building the benchmark required three corrections that change the
+numbers reported in the literature and in our own earlier work: the code mapping used by our preprocessing and by
+MedCo mislabels 10.7\% of ICD-10 diagnosis rows (for instance, essential hypertension becomes a hypertensive
+complication), the frequency groups used by MedCo's evaluation are not equal-size quartiles, and only 37\% of the
+rare diseases listed in the Mondo ontology can be expressed in the CCS label space at all. [Benchmark results:
+to be inserted from the cluster runs; every number in this report is measured, none is projected.]
 \end{abstract}
 
 \section{Introduction}
 
 Multi-label next-visit diagnosis prediction takes the coded history of a patient's first $k$ admissions
-(diagnoses, procedures and medications) and outputs a probability for every diagnosis label at admission
-$k+1$. Because each label is scored separately, the task makes the long tail visible: one can ask how well a
-model does on labels that appear a few hundred times in training, not only on average. On MIMIC-IV, the two
-most recent concept encoders report that the base Transformer reaches 46.80 AUPRC on their least frequent
-label group against 77.20 on the most frequent one; LINKO \citep{linko2025} raises the former to 49.61 and
-MedCo \citep{medco2026} to 52.01, but the difference between the two groups only moves from 30.40 to 29.18
-points, because frequent labels improve as well \citep[Table 1]{medco2026}. Better code representations help
-everywhere; they do not specifically help rare labels.
+(diagnoses, procedures and medications) and outputs a probability for every diagnosis label at admission $k+1$.
+Because each label is scored separately, the task makes the long tail visible. On MIMIC-IV, the most recent concept
+encoders report that the base Transformer reaches 46.80 AUPRC on their least frequent label group against 77.20 on
+the most frequent one; LINKO \citep{linko2025} raises the former to 49.61 and MedCo \citep{medco2026} to 52.01, but
+the difference between the two groups only moves from 30.40 to 29.18 points \citep[Table 1]{medco2026}.
 
-The working hypothesis of this project is that the remaining gap has several causes that call for different
-fixes: poorly estimated embeddings of rare input codes (Hypothesis A), dilution of a rare code among the
-roughly thirty codes of an admission (B), a classifier dominated by negative examples (C), and the narrow
-clinical contexts in which rare codes occur (D). Earlier experiments (Section~\ref{sec:hyp}) gave partial
-support to A and C. This report adds three things.
+These comparisons are made within each paper. Across papers, the cohorts, the code mappings, the label spaces,
+the definition of frequency groups and the training budgets differ, and several of these choices interact with
+rarity: a different mapping changes which labels are rare, a different grouping changes what ``rare'' means in
+the metric. Meanwhile, model families that have not been evaluated on this task at all have appeared, in
+particular looped Transformers that reuse their layers to add computation without parameters
+\citep{dehghani2019universal,giannou2023looped,yang2024looped,geiping2025recurrent,zhu2025ouro} and can adapt their
+depth to the input \citep{graves2016act,banino2021pondernet,popescu2026adaptive}. Rare labels are a natural place
+to test whether extra, input-dependent computation helps.
 
-\begin{enumerate}
-\item A study of the label space with public resources only (Section~\ref{sec:labels}). We ask how many
-rare diseases, in the sense of Orphanet and the other sources integrated by Mondo
-\citep{vasilevsky2026mondo}, can be represented by a CCS label, where they end up, and how much external
-knowledge exists for each label. The answers constrain what any model trained on these labels can achieve.
-\item Corrections to our own pipeline and to the comparison with prior work (Sections~\ref{sec:setup}
-and~\ref{sec:baseline}).
-\item An experimental programme with code (Section~\ref{sec:interventions}): each intervention changes one
-factor of the backbone, is implemented in the repository, and has been run end to end on synthetic data with
-the exact format of our MIMIC-IV artifacts.
-\end{enumerate}
+Our position is simple: to improve rare-disease prediction we first need a benchmark in which every model is
+trained and evaluated in the same way, with the rare-label metrics stated precisely. This report describes such a
+benchmark (Sections~\ref{sec:design} and~\ref{sec:models}), its results (Section~\ref{sec:results}), and what a
+``rare'' label means in it (Section~\ref{sec:rare}).
 
-\section{Task, data and backbone}\label{sec:setup}
+\section{Benchmark design}\label{sec:design}
 
+\subsection{Cohort and codes}
 \paragraph{Cohort.} We use the \texttt{hosp} module of MIMIC-IV \citep{johnson2023mimiciv}. Adult patients
 with at least two admissions are kept (100,163 patients), and patients are split 70/15/15 into training,
 validation and test sets (70,114 / 15,024 / 15,025 patients). For training, every history length
@@ -102,14 +92,116 @@ categories and prescriptions (NDC) to ATC level~3, both through PyHealth \citep{
 vocabularies contain 576 diagnosis, 230 procedure and 201 medication codes. An average admission carries
 11.7 diagnosis, 1.6 procedure and 18.1 medication codes.
 
-\paragraph{Labels.} The label vocabulary contains the 572 CCS categories seen as targets in training; no
-prevalence threshold is applied. The target of a sample is the set of \emph{all} CCS diagnoses of admission
-$k+1$, including those already present in the history. This follows MedCo, whose targets are the full set of
-next-visit diagnoses \citep{medco2026}, but differs from the description of the task as the prediction of
-\emph{new} diagnoses in our earlier draft. Section~\ref{sec:hyp} explains why the distinction matters for
-rare labels.
+\paragraph{Codes.} ICD-10 codes (54.3\% of diagnosis rows) are converted to ICD-9 with the CMS General
+Equivalence Mappings \citep{cms2018gem} and ICD-9 diagnoses are mapped to the most specific level of the HCUP
+multi-level CCS \citep{hcup2015}. Procedures are mapped to CCS procedure categories and prescriptions (NDC) to ATC
+level~3, both through PyHealth \citep{yang2023pyhealth}. The input vocabularies contain 576 diagnosis, 230
+procedure and 201 medication codes; an average admission carries 11.7 diagnosis, 1.6 procedure and 18.1
+medication codes.
 
-\paragraph{Backbone.} The model follows the released MedCo code \citep{medco2026}. Each modality has its own
+\subsection{Labels and their correction}\label{sec:labelfix}
+
+The labels are the CCS categories of all diagnoses of admission $k+1$, including those already present in the
+history, as in MedCo \citep{medco2026}. The original preprocessing, like MedCo's released code, keeps the first
+ICD-9 target that the GEM lists for each ICD-10 code. The GEM lists several targets for 7,862 ICD-10-CM codes, and
+for 3,864 of them the targets fall into different CCS categories: 3,572 are combination entries (one ICD-10 code
+corresponds to two ICD-9 codes, and keeping the first drops one) and 292 are lists of alternatives, where the
+first one is an arbitrary choice.
+
+\paragraph{Extent of the artefact.} 368,210 ICD-10 diagnosis rows (10.7\%) carry a code whose GEM targets fall
+into more than one CCS category. \texttt{I10} alone accounts for 83,775 rows and 48,611 patients. Under the
+original rule, ``Essential hypertension'' (7.1.1) is reached by 53,401 patients through ICD-9 rows and by only
+1,915 through ICD-10 rows, whereas ``Other hypertensive complications'' (7.1.2.2) is reached by 543 patients
+through ICD-9 rows and by 48,727 through ICD-10 rows; in the ICD-9 era, malignant essential hypertension (401.0),
+the target chosen for \texttt{I10}, is coded in only 397 rows. We corrected the mapping by sending combination
+entries to the union of their targets and resolving lists of alternatives with the target most often coded in
+the ICD-9 era. Among patients with at least two admissions, the correction changes the patient count of 30 of
+576 labels by 25\% or more (Table~\ref{tab:gemfix}). Three examples show how arbitrary the first target can be:
+bacteraemia (\texttt{R78.81}) is sent to \emph{bacteraemia of newborn}, so the label ``Other perinatal
+conditions'' is given to 1,957 adult patients; toxic encephalopathy (\texttt{G92}) is sent to toxic
+encephalitis; acute respiratory failure with hypoxia (\texttt{J96.01}) is sent to respiratory failure following
+trauma or surgery.
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{llrr}
+\toprule
+CCS & label & original rule & corrected\\
+\midrule
+7.1.1 & Essential hypertension & 34,621 & 51,965\\
+7.1.2.2 & Other hypertensive complications & 29,159 & 582\\
+7.2.11 & Congestive heart failure; nonhypertensive & 9,826 & 19,433\\
+8.6.1 & Respiratory failure & 5,723 & 13,712\\
+8.6.2 & Other respiratory insufficiency & 11,089 & 3,094\\
+6.1.2 & Encephalitis (except that caused by TB or STD) & 4,777 & 359\\
+15.7 & Other perinatal conditions & 1,957 & 1\\
+\bottomrule
+\end{tabular}
+\caption{Patients (with at least two admissions) carrying selected labels under the original mapping and under
+the corrected mapping (Notebook 9).}
+\label{tab:gemfix}
+\end{table}
+
+
+The benchmark therefore uses the corrected labels (\texttt{scripts/relabel\_gem.py}): cohort, visits, splits,
+history lengths, procedures and medications are unchanged, and only the diagnosis inputs and targets are
+recomputed, after which the label vocabulary and frequency strata are rebuilt with the original procedure. The
+MedCo backbone is also trained on the original labels to measure the effect of the correction.
+
+\subsection{Metrics and frequency groups}
+We report two kinds of AUPRC, which behave very differently on rare
+labels. \emph{Sample-AUPRC} (the PyHealth and MedCo convention) computes the average precision within each test
+sample over the labels and averages over samples; restricted to a group of labels, it keeps the samples with at
+least one positive in that group. \emph{Label-AUPRC} computes the average precision of each label over test
+samples and averages over labels. Frequency groups are defined on training data only. Our main analysis uses
+four groups of 143 labels each, split at the quartiles of the number of training samples containing the label
+($Q_{25}=200$, $Q_{50}=1{,}132$, $Q_{75}=4{,}258$). Notebook~1 stores a second, patient-level split
+($Q_{25}=166$) used for the ``rare/medium/common'' strata. The grouping used in MedCo's evaluation code is a
+third definition, discussed below.
+
+
+\paragraph{Frequency groups in MedCo.} In our first run of the backbone under the original protocol
+(Table~\ref{tab:nb2}), the least frequent group scored far lower than the least frequent group reported by MedCo for
+the same backbone (0.290 against 0.468). Reading their
+evaluation code (\nb{utils/eval\_test.py}, function \nb{get\_group\_labels1}) explains most of the
+discrepancy. Labels are sorted by frequency and assigned to the group in which the \emph{cumulative share of
+label occurrences} falls, so each group holds a quarter of the occurrences rather than a quarter of the
+labels. With a label distribution as skewed as ours (the 20 most frequent labels account for 28.5\% of
+label occurrences, counted per training patient), the first group contains most of the vocabulary and the last only a handful of very frequent
+labels. The columns of each group are selected by the insertion order of a \texttt{Counter}, which matches the label indices only if the label tokenizer happens to use the same
+order; we have not run their code to check this. The published group-wise numbers are therefore not comparable
+with ours, and our earlier reading of their ``0--25\%'' group as the rarest quarter of labels was wrong.
+The benchmark reports both definitions for every model.
+
+
+\subsection{Training protocol}
+
+All models are trained with binary cross-entropy (or the model's own objective for adaptive depth and logit
+adjustment), Adam with learning rate $10^{-3}$, batch size 64, gradient clipping at 1.0, at most 50 epochs and early
+stopping on validation sample-AUPRC with patience 5, on one 10\,GB slice of an NVIDIA A100. Embedding dimension
+is 256 and dropout 0.5 throughout. Each configuration is run with three seeds (42, 123, 7); we report means and
+standard deviations, and differences on the rarest quartile are tested with a paired bootstrap over test samples.
+About 700 test samples have a positive in the rarest quartile, so differences below one point are within noise.
+
+\section{Models}\label{sec:models}
+
+\begin{table}[H]
+\centering\footnotesize
+\input{tables/benchmark_models.tex}
+\caption{The 21 models of the benchmark. ``Block appl.'': number of Transformer block applications per modality
+(the compute of the Transformer part, at equal width).}
+\label{tab:models}
+\end{table}
+
+\paragraph{Baselines and recurrent models.} The label prior predicts the training frequency of each label and gives
+the floor of every metric. The bag-of-codes model feeds the logarithm of the count of each code in the history to
+a one-hidden-layer MLP; because targets include recurrent diagnoses, this model can copy the history and is a
+stronger baseline than its simplicity suggests. The GRU encodes the sequence of visit vectors (sum of code
+embeddings of each modality, concatenated), as in Doctor AI; RETAIN adds two reverse-time attention mechanisms over
+visits and variables \citep{choi2016retain}.
+
+\paragraph{Transformer backbone and variants.}
+The model follows the released MedCo code \citep{medco2026}. Each modality has its own
 embedding matrix ($d=256$, initialised from $\mathcal N(0,0.01^2)$); the codes of a visit are summed; three
 independent single-layer, single-head PyHealth Transformers encode the three visit sequences; their outputs are
 concatenated and a linear layer with a sigmoid gives the 572 probabilities. Training minimises binary
@@ -120,23 +212,81 @@ not at the last visit; and the layer adds no positional encoding, so attention i
 the order of visits beyond the identity of the first one. The model therefore cannot use recency, which is a
 limitation for a next-visit task and an obvious ablation for later work.
 
-\paragraph{Metrics and frequency groups.} We report two kinds of AUPRC, which behave very differently on rare
-labels. \emph{Sample-AUPRC} (the PyHealth and MedCo convention) computes the average precision within each test
-sample over the labels and averages over samples; restricted to a group of labels, it keeps the samples with at
-least one positive in that group. \emph{Label-AUPRC} computes the average precision of each label over test
-samples and averages over labels. Frequency groups are defined on training data only. Our main analysis uses
-four groups of 143 labels each, split at the quartiles of the number of training samples containing the label
-($Q_{25}=200$, $Q_{50}=1{,}132$, $Q_{75}=4{,}258$). Notebook~1 stores a second, patient-level split
-($Q_{25}=166$) used for the ``rare/medium/common'' strata. The grouping used in MedCo's evaluation code is a
-third definition, discussed in Section~\ref{sec:baseline}.
 
-\section{Baseline results}\label{sec:baseline}
+Four variants change one element each: learned embeddings of the distance to the last visit with a readout at the
+last visit (\texttt{transformer\_pos\_last}); attention pooling over the codes of a visit, one Set Transformer block
+followed by pooling with a learned seed \citep{lee2019settransformer} (\texttt{transformer\_setpool}); one
+cross-modality attention layer over the visit states of the three modalities (\texttt{transformer\_cross}), since in
+the backbone modalities meet only in the final linear layer; and logit adjustment
+\citep{menon2021logit}, which adds the log prior odds of each label to its logit during training only
+(\texttt{transformer\_logitadj}).
 
-Training was run on a laptop and stopped by hand after seven epochs; the best validation sample-AUPRC was
-reached at epoch 5 (0.4723) and the corresponding model was evaluated on the test set
-(Table~\ref{tab:nb2}, Figure~\ref{fig:nb2}). The validation macro label-AUPRC was still rising at epoch 7 (0.180),
-which means that the stopping criterion, chosen for comparability with MedCo, selects a model that has not
-finished learning the infrequent labels.
+\paragraph{Knowledge-based embeddings.} GRAM \citep{choi2017gram} builds each diagnosis and medication embedding by
+attention over the code and its ancestors (CCS levels, ATC levels). The knowledge model initialises every code
+embedding from a frozen biomedical sentence encoder, BioLORD-2023 \citep{remy2024biolord}, as
+$z_i = a\,W e_i + \delta_i$ with a learned projection $W$ and a free correction $\delta_i$. For diagnosis
+categories the encoded text is augmented with knowledge retrieved from Mondo and the HPO annotations: the diseases
+whose ICD-10-CM cross-references map to the category (rare diseases first), their most frequent phenotypes and
+genes (Section~\ref{sec:rare}). The same label documents also enter the classifier, $\ell_r=(w_r+Ue_r)^\top h$
+with $U$ shared by all labels, so that a rare label can inherit a direction learned on frequent labels with
+similar descriptions \citep{rios2018fewshot}. This combines the ideas of concept encoders that enrich embeddings
+from ontologies and LLMs \citep{linko2025,medco2026,jiang2024graphcare,hegselmann2025} with retrieval
+augmentation \citep{xu2024ramehr,jiang2025kare}.
+
+\subsection{Depth: deep, looped and adaptive Transformers}
+
+Per modality, a stack holds $L$ distinct Transformer blocks applied along a schedule of $D$ block indices. A deep
+Transformer uses distinct blocks, schedule $(1,2,\dots,D)$. A looped Transformer reuses blocks: \texttt{loop\_T4}
+applies a single block four times, $(1,1,1,1)$. With two blocks and four applications there are two ways to loop:
+\begin{itemize}
+\item \textbf{layer loop}, $(1,1,2,2)$: each layer is iterated before passing to the next, so the representation
+is refined at one level of abstraction before moving on;
+\item \textbf{model loop}, $(1,2,1,2)$: the whole stack is iterated, as in Universal-Transformer-style and
+recurrent-depth models \citep{dehghani2019universal,geiping2025recurrent}, so that later iterations can revisit
+early processing in the light of later layers.
+\end{itemize}
+\texttt{deep\_L4}, \texttt{loop\_T4}, \texttt{layerloop\_L2T2} and \texttt{modelloop\_L2T2} have the same compute
+(four block applications); the looped ones have the parameters of one or two blocks, and \texttt{deep\_L2} has the
+parameters of the two-block loops with half their compute. This separates the effect of computation from that of
+parameters.
+
+\paragraph{Adaptive depth.} The adaptive versions are read out after every block application with the shared
+classifier and trained on all exits, weighted by a truncated geometric prior over depths ($\lambda=0.3$), or with a
+PonderNet halting distribution \citep{banino2021pondernet} (\texttt{loop\_T4\_gate}); all adaptive models,
+including the gated one, are evaluated with the same post-hoc exit rules. At test time, following
+\citet{popescu2026adaptive}, who found that post-hoc confidence readouts match or beat learned halting gates, each
+sample exits at the first depth where the mean binary entropy of its top-$m$ predicted labels (or the change since
+the previous depth) falls below a threshold. The threshold is chosen on validation as the most aggressive one that
+keeps 99\% of the full-depth validation sample-AUPRC. We report the resulting accuracy, the average exit depth, and
+the average exit depth of samples with a rarest-quartile target against the others: if rare labels need more
+computation, their samples should exit later. \texttt{deep\_L4\_adaptive} applies the same procedure to a
+non-looped stack.
+
+\paragraph{A pitfall of weight tying.} The first cluster runs degraded with depth: after two epochs the gated
+model scored 0.463 at depth 1 and 0.436 at depth 4 (validation sample-AUPRC), the model trained on the last
+iteration only reached 0.382 after three epochs, against 0.447 for a single pass after one, and the model
+trained with a uniform prior collapsed at depths 3 and 4 (0.367 $\rightarrow$ 0.239 between epochs 1 and 2).
+The cause is in the PyHealth block, which ends with \texttt{return self.dropout(x)}: a dropout of rate 0.5 applied
+to its whole output, residual stream included. In a single pass this is harmless; in a loop it hits the
+recurrent state at every iteration, so after four iterations a coordinate of the input survives on the direct
+path with probability $0.5^4=1/16$ during training. We moved this dropout from the recurrent path to the
+readout branch. For $T=1$ the training distribution is unchanged (the same two dropouts precede the readout),
+and in evaluation mode the two versions are identical for every $T$. All multi-block models of the benchmark, looped or not, use this fix, so that they
+differ only in their schedule. A one-epoch run of the single-pass configuration on a 10\,GB slice of an A100
+reproduced the Notebook 2 model exactly (identical logits) and took 10.6 minutes per epoch; four-block
+configurations took 12 to 14 minutes per epoch.
+
+
+\section{Results}\label{sec:results}
+
+\subsection{Reference run under the original protocol}
+
+Before the benchmark, the backbone was trained once on the original labels, on a laptop, and stopped by hand
+after seven epochs; the best validation sample-AUPRC was reached at epoch 5 (0.4723). Table~\ref{tab:nb2} gives its
+test results. The validation macro label-AUPRC was still rising at epoch 7 (Figure~\ref{fig:nb2}), which means that
+early stopping on sample-AUPRC, chosen for comparability with MedCo, selects a model that has not finished learning
+the infrequent labels; the benchmark keeps this criterion for comparability but also records the per-label
+metrics at every epoch.
 
 \begin{table}[H]
 \centering\small
@@ -162,24 +312,68 @@ sample-AUPRC. Training was interrupted after epoch 7.}
 \label{fig:nb2}
 \end{figure}
 
-\paragraph{Comparison with MedCo.} Our least frequent group scores far lower than the least frequent group
-reported by MedCo for the same backbone (0.290 against 0.468). Reading their
-evaluation code (\nb{utils/eval\_test.py}, function \nb{get\_group\_labels1}) explains most of the
-discrepancy. Labels are sorted by frequency and assigned to the group in which the \emph{cumulative share of
-label occurrences} falls, so each group holds a quarter of the occurrences rather than a quarter of the
-labels. With a label distribution as skewed as ours (the 20 most frequent labels account for 28.5\% of
-label occurrences, counted per training patient), the first group contains most of the vocabulary and the last only a handful of very frequent
-labels. The columns of each group are selected by the insertion order of a \texttt{Counter}, which matches the label indices only if the label tokenizer happens to use the same
-order; we have not run their code to check this. The published group-wise numbers are therefore not comparable
-with ours, and our earlier reading of their ``0--25\%'' group as the rarest quarter of labels was wrong.
-Notebooks 6--8 now report both definitions for every model (\nb{label\_frequency\_groups(level="mass")}).
 
-\section{What is a rare label? The CCS label space and rare diseases}\label{sec:labels}
 
-The labels are CCS categories, which were designed for health-services research and group diagnoses by
-clinical similarity and cost. A rare disease in the usual sense (prevalence below 1 in 2,000 in the European definition; an analysis
-of 6,172 rare diseases in Orphanet estimated their cumulative point prevalence at 3.5--5.9\%
-\citep{nguengang2020prevalence}) is a different object. To relate the two we used only public resources (Notebook 4): the Mondo Disease Ontology
+\subsection{Benchmark}
+
+\IfFileExists{tables/benchmark_main.tex}{%
+\begin{table}[H]
+\centering\scriptsize
+\resizebox{\linewidth}{!}{\input{tables/benchmark_main.tex}}
+\caption{Test results on the corrected labels, mean (and standard deviation) over seeds. ``all'', Q1--Q4:
+sample-AUPRC overall and restricted to each equal-size label-frequency quartile; ``label Q1'', ``label Q4'': macro
+label-AUPRC of the rarest and most frequent quartiles.}
+\label{tab:bench}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{figures/benchmark_overall_vs_q1.pdf}
+\caption{Overall vs rarest-quartile sample-AUPRC of every model.}
+\label{fig:scatter}
+\end{figure}
+}{%
+\begin{center}
+\fbox{\parbox{0.9\linewidth}{\small\textbf{Pending.} The benchmark runs on the HubIA DGX
+(\texttt{scripts/benchmark.sbatch}, Notebook 10). Notebook 10 writes \texttt{report/tables/benchmark\_main.tex}
+and \texttt{benchmark\_depth.tex}; recompiling this document inserts the tables and figures here.}}
+\end{center}
+}
+
+\subsection{Depth, looping and adaptive exit}
+
+\IfFileExists{tables/benchmark_depth.tex}{%
+\begin{table}[H]
+\centering\scriptsize
+\resizebox{\linewidth}{!}{\input{tables/benchmark_depth.tex}}
+\caption{Deep, looped and adaptive models. ``appl.'': block applications per modality. ``adaptive'': accuracy with
+the post-hoc entropy exit chosen on validation; ``mean exit'': average number of block applications used, for
+samples with a rarest-quartile target and for the others.}
+\label{tab:depth}
+\end{table}
+\IfFileExists{figures/benchmark_depth_curves.pdf}{%
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/benchmark_depth_curves.pdf}
+\caption{Test sample-AUPRC when every sample exits after a fixed number of block applications.}
+\end{figure}}{}
+}{\begin{center}\fbox{\parbox{0.9\linewidth}{\small\textbf{Pending} (same runs).}}\end{center}}
+
+The questions this section answers are: whether four block applications beat one at equal parameters (\texttt{loop\_T4}
+against \texttt{transformer}) and at equal compute (\texttt{loop\_T4} against \texttt{deep\_L4}); whether layer loop or
+model loop is the better way to reuse two blocks; whether gains, if any, concentrate on the rarest quartile; and
+whether adaptive exit saves computation, and spends more of it on samples with rare targets.
+
+\section{What ``rare'' means in this benchmark}\label{sec:rare}
+
+The labels are CCS categories, designed for health-services research. A rare disease in the usual sense
+(prevalence below 1 in 2,000 in the European definition; an analysis of 6,172 rare diseases in Orphanet estimated
+their cumulative point prevalence at 3.5--5.9\% \citep{nguengang2020prevalence}) is a different object. This
+section relates the two, first with public resources and then on the MIMIC-IV diagnosis table.
+
+\subsection{Rare diseases in the CCS label space}
+
+We used only public resources here (Notebook 4): the Mondo Disease Ontology
 (commit \texttt{d3bdb9d}, 24 November 2026), whose \texttt{rare} subset unifies the rare-disease lists it
 integrates and which cross-references ICD-10-CM, Orphanet and OMIM \citep{vasilevsky2026mondo}; the HPO
 annotations (release 2025-01-16), which attach phenotypes and genes to OMIM and Orphanet diseases
@@ -192,7 +386,7 @@ codes checked in Notebook~1.
 the rare-disease lists that Mondo integrates (Orphanet, GARD, NORD, DOID, NCIt); it includes conditions such
 as fibromyalgia, listed by NORD, or toxic encephalopathy, listed by GARD. The \emph{strict} one keeps the
 diseases that Orphanet itself classifies as rare. Mondo contains 31,828 non-obsolete diseases, 16,370 in the
-broad and 6,331 in the strict subset (Table~\ref{tab:coverage}). Under the broad definition, Only 1,020 rare diseases (6.2\%) have an ICD-10-CM code marked as equivalent;
+broad and 6,331 in the strict subset (Table~\ref{tab:coverage}). Under the broad definition, only 1,020 rare diseases (6.2\%) have an ICD-10-CM code marked as equivalent;
 6,116 (37.4\%) have any ICD-10-CM cross-reference, most of them broader codes inherited from Orphanet's
 alignment. Through the preprocessing pipeline, 6,066 rare diseases (37.1\%) reach at least one CCS category; the
 other 63\% cannot be expressed in this label space at all, whatever the model. Orphanet-rare diseases are better
@@ -249,64 +443,10 @@ can be frequent because a few common conditions share it. The join between these
 frequencies is computed on the cluster (Notebook 4, Section 6) and will quantify this overlap. Second, the
 external knowledge that can be retrieved for a label is plentiful precisely for the residual categories: 235
 of the 274 hosting categories contain at least one rare disease with phenotype annotations, and 161 one with
-a gene association. This is the knowledge base used in Section~\ref{sec:rag}.
-
-\paragraph{An artefact of the code mapping.} The GEM lists several ICD-9 targets for 7,862 ICD-10-CM codes.
-For 3,864 of them the targets fall into different CCS categories: 3,572 are combination entries, where one
-ICD-10 code corresponds to two ICD-9 codes and keeping the first drops one component, and 292 are lists of
-alternatives, where the choice is arbitrary. The most consequential case is \texttt{I10}, essential
-hypertension, one of the most frequent codes in MIMIC-IV. Its first target is ICD-9 401.0, malignant essential
-hypertension, so every ICD-10-era admission coded \texttt{I10} receives the label ``Other hypertensive
-complications'' (CCS 7.1.2.2) while ICD-9-era admissions with the same diagnosis receive ``Essential
-hypertension'' (7.1.1); the Notebook 1 output (\texttt{I10 $\rightarrow$ 4010}) confirms it. One disease is split
-into two labels according to the admission year, which distorts label frequencies, and therefore the
-frequency groups, and introduces noise that no model can remove. Section~\ref{sec:mimic} measures the extent
-on the MIMIC-IV diagnosis table. Mapping combination entries to the union of their targets and resolving
-alternatives with the ICD-9-era frequencies would remove most of the problem; it changes the label space, so we
-will apply it as a separate, clearly labelled version of the data.
+a gene association. This is the knowledge base used by the \texttt{knowledge\_rag\_readout} model.
 
 
-\section{Rare-disease codes and the mapping artefact in the MIMIC-IV diagnosis table}\label{sec:mimic}
-
-Notebook 9 repeats the analyses of Section~\ref{sec:labels} on the \texttt{diagnoses\_icd} table of MIMIC-IV
-(6,364,488 rows, identical to the count in Notebook 1). Without the \texttt{admissions} table the exact cohort and
-split of Notebook 1 cannot be rebuilt in this analysis, so label frequencies are approximated by the number of
-patients with at least two admissions (100,057, against 100,163 in Notebook 1) who carry the label in any
-admission. The approximate quartile boundaries are 311, 1,487 and 4,491 patients.
-
-\paragraph{Extent of the artefact.} 368,210 ICD-10 diagnosis rows (10.7\%) carry a code whose GEM targets fall
-into more than one CCS category. \texttt{I10} alone accounts for 83,775 rows and 48,611 patients. Under the
-Notebook 1 rule, ``Essential hypertension'' (7.1.1) is reached by 53,401 patients through ICD-9 rows and by only
-1,915 through ICD-10 rows, whereas ``Other hypertensive complications'' (7.1.2.2) is reached by 543 patients
-through ICD-9 rows and by 48,727 through ICD-10 rows; in the ICD-9 era, malignant essential hypertension (401.0),
-the target chosen for \texttt{I10}, is coded in only 397 rows. We corrected the mapping by sending combination
-entries to the union of their targets and resolving lists of alternatives with the target most often coded in
-the ICD-9 era. Among patients with at least two admissions, the correction changes the patient count of 30 of
-576 labels by 25\% or more (Table~\ref{tab:gemfix}). Three examples show how arbitrary the first target can be:
-bacteraemia (\texttt{R78.81}) is sent to \emph{bacteraemia of newborn}, so the label ``Other perinatal
-conditions'' is given to 1,957 adult patients; toxic encephalopathy (\texttt{G92}) is sent to toxic
-encephalitis; acute respiratory failure with hypoxia (\texttt{J96.01}) is sent to respiratory failure following
-trauma or surgery.
-
-\begin{table}[H]
-\centering\small
-\begin{tabular}{llrr}
-\toprule
-CCS & label & Notebook 1 rule & corrected\\
-\midrule
-7.1.1 & Essential hypertension & 34,621 & 51,965\\
-7.1.2.2 & Other hypertensive complications & 29,159 & 582\\
-7.2.11 & Congestive heart failure; nonhypertensive & 9,826 & 19,433\\
-8.6.1 & Respiratory failure & 5,723 & 13,712\\
-8.6.2 & Other respiratory insufficiency & 11,089 & 3,094\\
-6.1.2 & Encephalitis (except that caused by TB or STD) & 4,777 & 359\\
-15.7 & Other perinatal conditions & 1,957 & 1\\
-\bottomrule
-\end{tabular}
-\caption{Patients (with at least two admissions) carrying selected labels under the Notebook 1 mapping and under
-the corrected mapping (Notebook 9).}
-\label{tab:gemfix}
-\end{table}
+\subsection{Rare-disease codes in MIMIC-IV}
 
 \paragraph{Rare-disease codes.} We call a diagnosis code a rare-disease code when Mondo marks it as
 \emph{equivalent} to a rare disease (exact cross-references only, ICD-10-CM and ICD-9). Under the broad
@@ -354,195 +494,6 @@ they carry a median of 16 diagnosis codes (mean 17.1) against 10 (mean 11.4) for
 a rare-disease code is therefore diluted more than an average code, which is the situation Hypothesis B
 describes.
 
-\section{Diagnostic results so far}\label{sec:hyp}
-
-The following experiments were run on a checkpoint taken after one epoch of training; their notebooks are not
-yet in the repository. They will be repeated on the converged model (Notebook 8 reproduces the descriptive
-parts).
-
-\paragraph{Hypothesis A: the embedding of a code carries information that context cannot replace.} For 72
-frequent source codes, 36 that usually appear in visits with few other diagnoses (``sparse context'') and 36
-that appear in rich contexts, we replaced the diagnosis embedding by a random vector of the same norm (50 draws)
-and measured the change in AUPRC of the labels statistically associated with the source. Corruption hurt
-sparse-context sources more (mean $\Delta$AUPRC $-0.0020$ against $-0.00003$; bootstrap 95\% CI of the
-difference $[-0.0033, -0.0009]$; Mann--Whitney $U=268$, $p=3.2\times10^{-5}$), and 88.6\% of sparse-context
-sources were affected negatively against 58.3\% of rich-context ones. The effect grows continuously as context
-becomes poorer (Spearman $\rho=0.46$, $p=4.7\times10^{-5}$). The effects are small in absolute terms, and the
-sources are frequent codes; extending the conclusion to rare codes is an extrapolation that the
-knowledge-initialisation experiments test directly.
-
-\paragraph{Hypothesis C: part of the rare-label signal is present but not read out.} Retraining only the output
-layer of the frozen backbone with a class-balanced loss \citep{cui2019classbalanced} raised the label-AUPRC of the rare
-stratum from 0.072 to 0.082 and that of the common stratum from 0.286 to 0.295. The representation therefore
-contains some rare-label information that the original classifier did not use, but recalibration recovers
-little of the gap. Across all labels, $\log$ training frequency explains 23\% of the variance of per-label AUPRC
-($r=0.48$); several rare labels exceed 0.5 and several frequent ones stay below 0.1.
-
-\paragraph{Embedding geometry.} Clustering the learned diagnosis embeddings gave silhouette scores of
-0.022--0.028 for $k$ between 5 and 40, i.e.\ no clear global structure, with some clinically coherent pockets
-(complications of pregnancy). Notebook 8 recomputes this on the converged model and adds the agreement of nearest
-neighbours with the CCS chapter, by input frequency.
-
-\paragraph{Recurrent and new positives.} Because targets include codes already present in the history, a large
-part of the signal for chronic, frequent labels is ``this code was there before''. For a label $r$ that occurs
-for the first time at visit $k+1$, the embedding $z_r$ never enters the input of the sample; whatever the model
-predicts must come from other codes and from the classifier row $w_r$, which is learned from the $n_r$ positives
-alone. If rare labels are more often new than frequent ones, part of the measured gap is a gap between copying
-and anticipating. Notebook 8 measures, for each frequency group, the share of recurrent positives and the
-AUPRC restricted to new occurrences. This argument also guides the design of the knowledge experiments: input
-embeddings and the output layer are two distinct channels.
-
-\section{Interventions}\label{sec:interventions}
-
-Each intervention below changes one factor of the backbone; splits, labels, optimisation and early stopping are
-unchanged, and all models are evaluated with the same code (\nb{src/rarepred}). A check copies the weights of
-the Notebook 2 model into the default configuration and verifies that the logits are identical (maximum
-absolute difference $0$). Table~\ref{tab:plan} summarises the programme.
-
-\subsection{Knowledge-initialised code embeddings}\label{sec:llm}
-
-Injecting knowledge into code embeddings has a long history: GRAM builds a code's embedding by attention over
-its ancestors in an ontology \citep{choi2017gram}; GraphCare builds patient-specific graphs from LLM-extracted
-knowledge \citep{jiang2024graphcare}; LINKO propagates information across several ontologies
-\citep{linko2025}; MedCo enriches a text-attributed knowledge graph with LLM-inferred relations
-\citep{medco2026}. More simply, a frozen text encoder applied to code descriptions already provides strong
-representations of structured EHR data \citep{hegselmann2025}. We start from this simplest form, since it
-isolates the contribution of text knowledge from that of graph propagation.
-
-Each code $i$ receives a description (its CCS path, its ATC class name or its CCS procedure name), encoded by
-BioLORD-2023 \citep{remy2024biolord}, a sentence encoder trained to align biomedical concept names with their
-definitions; MedCPT \citep{jin2023medcpt} and SapBERT \citep{liu2021sapbert} are alternatives. The embedding
-used by the model is
-\begin{equation}
-z_i = a\,W e_i + \delta_i,
-\end{equation}
-where $e_i$ is the frozen, standardised text embedding, $W$ a learned projection shared by all codes,
-$a=0.01$ keeps the scale of the original initialisation, and $\delta_i$ a free correction initialised at zero.
-In the variant with shrinkage, the loss is augmented by $\lambda_0\,\frac{1}{|V|}\sum_i \|\delta_i\|^2/(1+n_i)$,
-where $n_i$ is the number of training samples containing code $i$, so that frequent codes move freely and rare
-codes stay close to their prior. Code descriptions contain no patient information and may be processed by
-external models without conflict with the MIMIC-IV data use agreement.
-
-\subsection{Retrieval of rare-disease knowledge}\label{sec:rag}
-
-Retrieval augmentation has been applied to EHR prediction by retrieving documents about the codes of a patient
-\citep{xu2024ramehr} or communities of a medical knowledge graph \citep{jiang2025kare}, and RareSyn uses retrieval
-to synthesise rare-disease records \citep{wang2025raresyn}; for rare diseases specifically, \citet{zhao2025discrete}
-learn discrete code representations. We retrieve through structure rather than similarity: for each CCS
-diagnosis category, the documents contain the Mondo diseases whose ICD-10-CM cross-references map to the
-category through our pipeline (rare diseases first, ranked by the richness of their phenotype annotation), their
-most frequent HPO phenotypes, their genes and the definitions of the first two diseases (Notebook 5). Every
-retrieved item is therefore attached to the right label, and nothing derived from MIMIC-IV enters the
-documents. Retrieval augments 423 of the 589 categories; the median document grows from 108 to 643 characters.
-For essential hypertension retrieval adds nothing, whereas the documents of the metabolic and congenital
-residual categories list conditions such as mucopolysaccharidosis type 2 or Williams syndrome together with
-phenotypes (seizure, global developmental delay, hypotonia) and genes.
-
-The knowledge enters the model through two channels, tested separately and together. On the input side, the
-retrieved document replaces the description in $e_i$ for diagnosis codes (configuration \nb{rag}). On the output
-side, the logit of label $r$ becomes
-\begin{equation}
-\ell_r = (w_r + U e_r)^\top h,
-\end{equation}
-where $h$ is the patient representation, $e_r$ the text embedding of the label document and $U$ a projection
-shared by all labels and initialised at zero (configuration \nb{readout}). A rare label then inherits a
-classifier direction learned on frequent labels with similar descriptions, the multi-label analogue of
-zero-shot label-description classifiers in ICD coding \citep{rios2018fewshot}. Following the argument of
-Section~\ref{sec:hyp}, we expect the output channel to matter more than the input channel for labels that are
-usually new at visit $k+1$.
-
-\subsection{Fusion of the three modality encoders and visit pooling}
-
-In the backbone, diagnoses, medications and procedures meet only in the final linear layer, so the logit of a
-label is a sum of three terms, one per modality. Conjunctions such as ``epilepsy together with a specific
-antiepileptic'' can be approximated additively but cannot be represented as interactions. Within a visit, codes
-are summed, and a rare diagnosis is mixed with the thirty-odd codes of an average admission. Notebook 7 compares
-concatenation (the backbone) with summation of the three representations, with one cross-modality attention
-layer over the visit states of all modalities, and with attention pooling over the codes of a visit (one Set
-Transformer block followed by pooling with a learned seed, \citealp{lee2019settransformer}), alone and combined
-with cross-modality attention. The pooled visit vector is rescaled by the number of codes so that its magnitude
-matches that of the sum.
-
-\subsection{Looped Transformers with adaptive depth}
-
-A looped Transformer applies the same block $T$ times \citep{dehghani2019universal,giannou2023looped}. Weight
-tying adds computation without adding parameters, has been shown to help learn iterative algorithms in
-context \citep{yang2024looped}, and scales to language models with latent reasoning
-\citep{geiping2025recurrent,zhu2025ouro}. With adaptive depth the number of iterations depends on the input, as
-in adaptive computation time \citep{graves2016act} and PonderNet \citep{banino2021pondernet}.
-\citet{popescu2026adaptive} show that a learned halting gate entangles the choice of exit with the formation
-of the intermediate states, and that training with a fixed prior over depths, followed by post-hoc exit rules
-based on the confidence of the readout, matches or beats learned gates. Our question is narrower: if a single
-pass cannot recover the signal of a code in a sparse visit (Hypothesis A), does iterating help, and do rare-label
-samples require more iterations?
-
-Notebook 3 replaces each modality's Transformer layer by one PyHealth block applied up to $T=4$ times, reads out
-with the shared linear head after every iteration, and trains either on the last iteration, on all iterations
-with a uniform or truncated geometric prior ($\lambda=0.3$), or with a PonderNet gate. Exits are chosen post hoc
-from entropy, margin, the change between consecutive predictions or hidden-state displacement, and evaluated by
-the depth needed to reach a given fraction of full-depth performance.
-
-\paragraph{A pitfall of weight tying.} The first cluster runs degraded with depth: after two epochs the gated
-model scored 0.463 at depth 1 and 0.436 at depth 4 (validation sample-AUPRC), the model trained on the last
-iteration only reached 0.382 after three epochs, against 0.447 for a single pass after one, and the model
-trained with a uniform prior collapsed at depths 3 and 4 (0.367 $\rightarrow$ 0.239 between epochs 1 and 2).
-The cause is in the PyHealth block, which ends with \texttt{return self.dropout(x)}: a dropout of rate 0.5 applied
-to its whole output, residual stream included. In a single pass this is harmless; in a loop it hits the
-recurrent state at every iteration, so after four iterations a coordinate of the input survives on the direct
-path with probability $0.5^4=1/16$ during training. We moved this dropout from the recurrent path to the
-readout branch. For $T=1$ the training distribution is unchanged (the same two dropouts precede the readout),
-and in evaluation mode the two versions are identical for every $T$. The runs were cancelled and are being
-repeated with the corrected notebook; these early numbers are reported only to document the issue. A
-one-epoch run of the single-pass configuration on a 10\,GB slice of an A100 confirmed the equivalence with the
-Notebook 2 model (identical logits) and took 10.6 minutes per epoch; looped configurations took 12 to 14
-minutes per epoch.
-
-\subsection{Programme}
-
-\begin{table}[H]
-\centering\small
-\begin{tabularx}{\linewidth}{L{3.3cm}YL{0.7cm}L{3.4cm}}
-\toprule
-experiment & configurations & nb. & status\\
-\midrule
-Label-space study & Mondo/HPO coverage, concentration, GEM audit & 4 & done\\
-MIMIC-IV code audit & GEM artefact on diagnosis rows, rare-disease codes, labels & 9 & done (approximate cohort)\\
-Corrected labels & rebuild the samples with \nb{gem\_targets\_corrected}, retrain the baseline & 1, 2 & planned (first)\\
-Knowledge base & documents for 589 CCS categories; text embeddings & 5 & documents done; encoding on cluster\\
-Knowledge injection & \nb{baseline}, \nb{desc}, \nb{rag}, \nb{rag\_shrink}, \nb{readout}, \nb{rag\_readout} & 6 & implemented, tested on synthetic data\\
-Fusion and pooling & \nb{concat\_sum}, \nb{sum\_sum}, \nb{cross\_sum}, \nb{concat\_set}, \nb{cross\_set} & 7 & implemented, tested on synthetic data\\
-Looped Transformer & \nb{L1\_final}, \nb{L4\_final}, \nb{L4\_uniform}, \nb{L4\_geometric}, \nb{L4\_gate} & 3 & corrected, rerun in progress\\
-Per-label diagnostics & frequency, recurrence, diversity, geometry, MedCo groups & 8 & implemented, tested on synthetic data\\
-\bottomrule
-\end{tabularx}
-\caption{Experimental programme. All configurations use seed 42 first; those that matter will be repeated with
-three seeds, and differences on Q1 are tested with a paired bootstrap over test samples (about 700 samples have
-a Q1 positive, so differences below one point are within noise).}
-\label{tab:plan}
-\end{table}
-
-\begin{table}[H]
-\centering\small
-\begin{tabular}{lcccccc}
-\toprule
-configuration & sample-AUPRC & Q1 & Q4 & Q4$-$Q1 & $\Delta$Q1 [95\% CI] & label-AUPRC rare\\
-\midrule
-\nb{baseline} & \pending & \pending & \pending & \pending & -- & \pending\\
-\nb{desc} & \pending & \pending & \pending & \pending & \pending & \pending\\
-\nb{rag} & \pending & \pending & \pending & \pending & \pending & \pending\\
-\nb{rag\_shrink} & \pending & \pending & \pending & \pending & \pending & \pending\\
-\nb{readout} & \pending & \pending & \pending & \pending & \pending & \pending\\
-\nb{rag\_readout} & \pending & \pending & \pending & \pending & \pending & \pending\\
-\bottomrule
-\end{tabular}
-\caption{Knowledge injection (Notebook 6), test set. Pending: the cells will be filled from the summary
-file written by Notebook 6 once the cluster runs are complete.}
-\label{tab:knowledge}
-\end{table}
-
-\paragraph{Label imbalance.} The decoupling experiment of Hypothesis C used a class-balanced loss. Logit
-adjustment \citep{menon2021logit} and focal loss \citep{lin2020focal} are the natural comparisons and can be
-combined with every configuration above, since they change only the loss.
 
 \section{Further data}\label{sec:data}
 
@@ -579,27 +530,27 @@ training trajectories according to a known rule (number of positives, triggering
 richness of context) and measure each model's shortfall against the oracle AUPRC of the rule. This isolates
 frequency, context and modality effects that observational labels confound.
 
+
 \section{Limitations}
 
-All measured results come from a single seed, and the Hypothesis A and C experiments from a checkpoint trained
-for one epoch. The baseline was stopped by hand, and its stopping criterion favours frequent labels. The label
-definition (all next-visit codes) mixes recurrent and new diagnoses. The GEM artefact affects the labels of every
-model trained so far, including the baseline of Table~\ref{tab:nb2}; retraining on the corrected mapping is the
-first item of the programme. The analyses of Section~\ref{sec:mimic} use an approximate cohort and label
-frequencies. The label-space study depends on the
-cross-references curated in Mondo: a rare disease without an ICD-10-CM cross-reference may still be coded in
-MIMIC-IV under some category, so the 37\% coverage is a statement about the mapping, not about clinical coding
-practice. Finally, MIMIC-IV comes from a single tertiary centre, and rare diseases seen there are those that lead
-to hospital admission.
+The reference run comes from a single seed and was stopped by hand. The label definition (all next-visit codes)
+mixes recurrent and new diagnoses, so part of every model's score on frequent labels comes from recognising codes
+already in the history. Correcting the code mapping makes our numbers comparable across models but not with
+published ones, which use the original mapping; the backbone run on both label versions quantifies the gap. The
+analyses of Section~\ref{sec:rare} that use MIMIC-IV records rely on an approximate cohort, and the label-space
+study depends on the cross-references curated in Mondo: a rare disease without an ICD-10-CM cross-reference may
+still be coded in MIMIC-IV under some category. Finally, MIMIC-IV comes from a single tertiary centre, and the rare
+diseases seen there are those that lead to hospital admission.
 
 \section{Reproducibility}
 
-Code, notebooks and results are in the project repository. \nb{src/rarepred} contains data loading, models,
-metrics and training; \nb{notebooks/} contains the preprocessing (1), the backbone (2), the looped Transformer (3),
-the label-space study (4), the knowledge base (5), the experiments (6--8) and the MIMIC-IV code audit (9); \nb{scripts/} contains the Slurm
-scripts for the HubIA DGX and the script that downloads the public resources. MIMIC-IV data, processed
-artifacts and checkpoints stay on the cluster. Every number in this report is traceable to
-\nb{results/measured\_results.json} or to the saved outputs of a notebook.
+Code, notebooks and results are in the project repository. \nb{src/rarepred} contains data loading, the model zoo
+(\nb{zoo.py}), the benchmark runner (\nb{bench.py}) and the aggregation of results (\nb{aggregate.py});
+\nb{scripts/relabel\_gem.py} builds the corrected labels, \nb{scripts/benchmark.sbatch} runs the whole benchmark as a
+Slurm job array on the HubIA DGX, and Notebook 10 trains any missing run, aggregates the results and writes the
+tables of this report. The label-space analyses are in Notebooks 4 and 9. MIMIC-IV data, processed artifacts and
+checkpoints stay on the cluster. Every number in this report is traceable to \nb{results/measured\_results.json},
+to \nb{results/benchmark/} or to the saved outputs of a notebook.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
