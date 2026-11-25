@@ -43,10 +43,13 @@ and sets out the experiments that follow from it. Our reimplementation of the sh
 reaches a test sample-AUPRC of 0.471, with 0.290 on the rarest quarter of the 572 CCS labels and 0.543 on the
 most frequent quarter. Before testing remedies we examined what a ``rare'' label is in this task. Linking the
 Mondo Disease Ontology to the label space through the same mapping as our preprocessing shows that only 37\%
-of the 16,370 rare diseases in Mondo can reach a CCS label at all, and those that do are concentrated in
-residual categories: ``All other congenital anomalies'' alone receives 1,076 of them. The same audit exposed a
-mapping artefact in the preprocessing (ICD-10 essential hypertension is labelled as a hypertensive
-complication) and showed that the frequency groups used by the main baseline we compare against are not the
+of the 16,370 rare diseases in Mondo (62\% of the 6,331 that Orphanet classifies as rare) can reach a CCS label
+at all, and those that do are concentrated in residual categories: ``All other congenital anomalies'' alone
+receives 1,076 of them. In the MIMIC-IV diagnosis table, patients carrying a code that is exactly equivalent to
+an Orphanet rare disease fall mostly into frequent labels, where they are a small minority. The audit also
+exposed a mapping artefact that affects 10.7\% of ICD-10 diagnosis rows and changes the patient count of 30
+labels by at least 25\% (ICD-10 essential hypertension, for instance, is labelled as a hypertensive
+complication), and showed that the frequency groups used by the main baseline we compare against are not the
 equal-size quartiles we had assumed. We then describe four interventions, each implemented and tested end to
 end on synthetic data and ready to run on the cluster: knowledge-initialised code embeddings from a biomedical
 text encoder, retrieval of rare-disease knowledge (Mondo, HPO phenotypes, genes) into those embeddings and into
@@ -185,38 +188,45 @@ from the data files of the \texttt{icd} R package \citep{wasey_icd}. Our reconst
 reproduces the preprocessing exactly: 15,072 ICD-9 codes, 589 CCS categories, and identical results on the five
 codes checked in Notebook~1.
 
-\paragraph{Coverage.} Mondo contains 31,828 non-obsolete diseases, 16,370 of them in the rare subset
-(Table~\ref{tab:coverage}). Only 1,020 rare diseases (6.2\%) have an ICD-10-CM code marked as equivalent;
+\paragraph{Coverage.} We use two definitions. The \emph{broad} one is Mondo's \texttt{rare} subset, the union of
+the rare-disease lists that Mondo integrates (Orphanet, GARD, NORD, DOID, NCIt); it includes conditions such
+as fibromyalgia, listed by NORD, or toxic encephalopathy, listed by GARD. The \emph{strict} one keeps the
+diseases that Orphanet itself classifies as rare. Mondo contains 31,828 non-obsolete diseases, 16,370 in the
+broad and 6,331 in the strict subset (Table~\ref{tab:coverage}). Under the broad definition, Only 1,020 rare diseases (6.2\%) have an ICD-10-CM code marked as equivalent;
 6,116 (37.4\%) have any ICD-10-CM cross-reference, most of them broader codes inherited from Orphanet's
 alignment. Through the preprocessing pipeline, 6,066 rare diseases (37.1\%) reach at least one CCS category; the
-other 63\% cannot be expressed in this label space at all, whatever the model. Phenotype annotations exist for
-56.4\% of rare diseases and gene associations for 41.4\%.
+other 63\% cannot be expressed in this label space at all, whatever the model. Orphanet-rare diseases are better
+connected to ICD-10 (61.7\% reach a CCS category), but most of these links are broader codes rather than exact
+equivalents (8.2\%).
 
 \begin{table}[H]
 \centering\small
-\begin{tabular}{lrr}
+\begin{tabular}{lrrrr}
 \toprule
- & diseases & \% of rare subset\\
+ & \multicolumn{2}{c}{broad (Mondo \texttt{rare})} & \multicolumn{2}{c}{strict (Orphanet rare)}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & diseases & \% & diseases & \%\\
 \midrule
-Mondo diseases (non-obsolete) & 31,828 & \\
-\quad in the rare subset & 16,370 & 100.0\\
-\quad\quad with an exact ICD-10-CM cross-reference & 1,020 & 6.2\\
-\quad\quad with any ICD-10-CM cross-reference & 6,116 & 37.4\\
-\quad\quad reaching $\ge 1$ CCS category through the preprocessing & 6,066 & 37.1\\
-\quad\quad with an Orphanet / OMIM cross-reference & 8,669 / 7,830 & 53.0 / 47.8\\
-\quad\quad with HPO phenotype annotations & 9,232 & 56.4\\
-\quad\quad with a gene association & 6,769 & 41.4\\
+diseases in the subset & 16,370 & 100.0 & 6,331 & 100.0\\
+with an exact ICD-10-CM cross-reference & 1,020 & 6.2 & 518 & 8.2\\
+with any ICD-10-CM cross-reference & 6,116 & 37.4 & 3,937 & 62.2\\
+reaching $\ge 1$ CCS category through the preprocessing & 6,066 & 37.1 & 3,908 & 61.7\\
+with an Orphanet cross-reference & 8,669 & 53.0 & 6,331 & 100.0\\
+with an OMIM cross-reference & 7,830 & 47.8 & 3,203 & 50.6\\
+with HPO phenotype annotations & 9,232 & 56.4 & 4,801 & 75.8\\
+with a gene association & 6,769 & 41.4 & 2,946 & 46.5\\
 \bottomrule
 \end{tabular}
-\caption{Rare diseases in Mondo and their links to the label space and to phenotype and gene knowledge
-(Notebook 4).}
+\caption{Rare diseases in Mondo (31,828 non-obsolete diseases in total) and their links to the label space and
+to phenotype and gene knowledge, under two definitions (Notebook 4).}
 \label{tab:coverage}
 \end{table}
 
 \paragraph{Concentration.} The 6,066 reachable rare diseases fall into 274 of the 589 CCS categories, with a
 median of 6 rare diseases per hosting category (interquartile range 2--18) and a very long tail
-(Figure~\ref{fig:rare}). The ten largest categories receive 49.4\% of all disease--category links. They are
-residual categories: ``All other congenital anomalies'' (1,076 rare diseases), ``Other and unspecified
+(Figure~\ref{fig:rare}); under the strict definition, 3,908 diseases fall into 250 categories
+(median 4). The ten largest categories receive 49.4\% of all disease--category links. They are
+residual categories: ``All other congenital anomalies'' (1,076 rare diseases; 889 under the strict definition), ``Other and unspecified
 metabolic, nutritional, and endocrine disorders'' (670), ``Other and unspecified hereditary and degenerative
 nervous conditions'' (315), followed by congenital anomalies of the limbs and of the integument. For such a
 label, a positive sample can stand for any of hundreds of unrelated conditions, and predicting it means
@@ -250,10 +260,99 @@ hypertension, so every ICD-10-era admission coded \texttt{I10} receives the labe
 complications'' (CCS 7.1.2.2) while ICD-9-era admissions with the same diagnosis receive ``Essential
 hypertension'' (7.1.1); the Notebook 1 output (\texttt{I10 $\rightarrow$ 4010}) confirms it. One disease is split
 into two labels according to the admission year, which distorts label frequencies, and therefore the
-frequency groups, and introduces noise that no model can remove. Notebook 4 counts the affected MIMIC-IV
-diagnosis rows on the cluster. Mapping combination entries to the union of their targets and resolving
+frequency groups, and introduces noise that no model can remove. Section~\ref{sec:mimic} measures the extent
+on the MIMIC-IV diagnosis table. Mapping combination entries to the union of their targets and resolving
 alternatives with the ICD-9-era frequencies would remove most of the problem; it changes the label space, so we
 will apply it as a separate, clearly labelled version of the data.
+
+
+\section{Rare-disease codes and the mapping artefact in the MIMIC-IV diagnosis table}\label{sec:mimic}
+
+Notebook 9 repeats the analyses of Section~\ref{sec:labels} on the \texttt{diagnoses\_icd} table of MIMIC-IV
+(6,364,488 rows, identical to the count in Notebook 1). Without the \texttt{admissions} table the exact cohort and
+split of Notebook 1 cannot be rebuilt in this analysis, so label frequencies are approximated by the number of
+patients with at least two admissions (100,057, against 100,163 in Notebook 1) who carry the label in any
+admission. The approximate quartile boundaries are 311, 1,487 and 4,491 patients.
+
+\paragraph{Extent of the artefact.} 368,210 ICD-10 diagnosis rows (10.7\%) carry a code whose GEM targets fall
+into more than one CCS category. \texttt{I10} alone accounts for 83,775 rows and 48,611 patients. Under the
+Notebook 1 rule, ``Essential hypertension'' (7.1.1) is reached by 53,401 patients through ICD-9 rows and by only
+1,915 through ICD-10 rows, whereas ``Other hypertensive complications'' (7.1.2.2) is reached by 543 patients
+through ICD-9 rows and by 48,727 through ICD-10 rows; in the ICD-9 era, malignant essential hypertension (401.0),
+the target chosen for \texttt{I10}, is coded in only 397 rows. We corrected the mapping by sending combination
+entries to the union of their targets and resolving lists of alternatives with the target most often coded in
+the ICD-9 era. Among patients with at least two admissions, the correction changes the patient count of 30 of
+576 labels by 25\% or more (Table~\ref{tab:gemfix}). Three examples show how arbitrary the first target can be:
+bacteraemia (\texttt{R78.81}) is sent to \emph{bacteraemia of newborn}, so the label ``Other perinatal
+conditions'' is given to 1,957 adult patients; toxic encephalopathy (\texttt{G92}) is sent to toxic
+encephalitis; acute respiratory failure with hypoxia (\texttt{J96.01}) is sent to respiratory failure following
+trauma or surgery.
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{llrr}
+\toprule
+CCS & label & Notebook 1 rule & corrected\\
+\midrule
+7.1.1 & Essential hypertension & 34,621 & 51,965\\
+7.1.2.2 & Other hypertensive complications & 29,159 & 582\\
+7.2.11 & Congestive heart failure; nonhypertensive & 9,826 & 19,433\\
+8.6.1 & Respiratory failure & 5,723 & 13,712\\
+8.6.2 & Other respiratory insufficiency & 11,089 & 3,094\\
+6.1.2 & Encephalitis (except that caused by TB or STD) & 4,777 & 359\\
+15.7 & Other perinatal conditions & 1,957 & 1\\
+\bottomrule
+\end{tabular}
+\caption{Patients (with at least two admissions) carrying selected labels under the Notebook 1 mapping and under
+the corrected mapping (Notebook 9).}
+\label{tab:gemfix}
+\end{table}
+
+\paragraph{Rare-disease codes.} We call a diagnosis code a rare-disease code when Mondo marks it as
+\emph{equivalent} to a rare disease (exact cross-references only, ICD-10-CM and ICD-9). Under the broad
+definition, 899 such codes occur in MIMIC-IV and 46,683 patients (20.9\% of patients with a diagnosis) carry at
+least one; under the strict definition, 402 codes and 14,664 patients (6.6\%). Even the strict list is dominated
+by conditions that Orphanet classifies as rare but that are not unusual in a tertiary hospital: cardiogenic
+shock (2,039 patients with the ICD-10 code), essential thrombocythaemia, atrial septal defect, systemic lupus erythematosus. Genuinely
+uncommon disorders are present in the long tail, each carried by few patients.
+
+\paragraph{Where they fall.} Table~\ref{tab:rarecodes} crosses the labels carrying rare-disease codes with the
+approximate frequency quartiles. Under the strict definition, only 28 of the 144 rarest labels contain any patient
+with a rare-disease code (371 patient--label pairs in total), against 38 of the 144 most frequent labels (5,090
+pairs). Within the rare labels that host them, rare-disease patients are a sizeable minority (median share 15.8\%);
+within frequent labels they are lost (median 0.4\%). A few labels are dominated by them: atrial septal defect
+(59.7\% of the label's patients), systemic lupus erythematosus and connective tissue disorders (57.8\%), and
+neoplasms of unspecified nature (46.1\%). Improving the prediction of the rarest quartile of labels and improving
+the prediction of rare diseases are therefore related but different goals: most rare-disease patients sit in
+frequent labels, where no label-level metric will register them.
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{llrrrr}
+\toprule
+definition & quartile & labels & labels with a rare code & patient--label pairs & median share\\
+\midrule
+\multirow{4}{*}{broad} & Q1 (rarest) & 144 & 40 & 784 & 0.168\\
+ & Q2 & 144 & 35 & 6,744 & 0.206\\
+ & Q3 & 144 & 41 & 11,783 & 0.033\\
+ & Q4 (most frequent) & 144 & 51 & 24,961 & 0.012\\
+\midrule
+\multirow{4}{*}{strict} & Q1 (rarest) & 144 & 28 & 371 & 0.158\\
+ & Q2 & 144 & 21 & 2,235 & 0.068\\
+ & Q3 & 144 & 29 & 3,497 & 0.014\\
+ & Q4 (most frequent) & 144 & 38 & 5,090 & 0.004\\
+\bottomrule
+\end{tabular}
+\caption{Labels carrying patients with a rare-disease code, by approximate label-frequency quartile. ``Median
+share'': median, over the labels that host them, of the fraction of the label's patients who carry a rare-disease
+code (Notebook 9).}
+\label{tab:rarecodes}
+\end{table}
+
+\paragraph{Visit complexity.} Admissions with a rare-disease code are more complex: under the strict definition
+they carry a median of 16 diagnosis codes (mean 17.1) against 10 (mean 11.4) for the others. Under sum pooling,
+a rare-disease code is therefore diluted more than an average code, which is the situation Hypothesis B
+describes.
 
 \section{Diagnostic results so far}\label{sec:hyp}
 
@@ -406,7 +505,9 @@ minutes per epoch.
 \toprule
 experiment & configurations & nb. & status\\
 \midrule
-Label-space study & Mondo/HPO coverage, concentration, GEM audit & 4 & done (public data); MIMIC join on cluster\\
+Label-space study & Mondo/HPO coverage, concentration, GEM audit & 4 & done\\
+MIMIC-IV code audit & GEM artefact on diagnosis rows, rare-disease codes, labels & 9 & done (approximate cohort)\\
+Corrected labels & rebuild the samples with \nb{gem\_targets\_corrected}, retrain the baseline & 1, 2 & planned (first)\\
 Knowledge base & documents for 589 CCS categories; text embeddings & 5 & documents done; encoding on cluster\\
 Knowledge injection & \nb{baseline}, \nb{desc}, \nb{rag}, \nb{rag\_shrink}, \nb{readout}, \nb{rag\_readout} & 6 & implemented, tested on synthetic data\\
 Fusion and pooling & \nb{concat\_sum}, \nb{sum\_sum}, \nb{cross\_sum}, \nb{concat\_set}, \nb{cross\_set} & 7 & implemented, tested on synthetic data\\
@@ -483,7 +584,9 @@ frequency, context and modality effects that observational labels confound.
 All measured results come from a single seed, and the Hypothesis A and C experiments from a checkpoint trained
 for one epoch. The baseline was stopped by hand, and its stopping criterion favours frequent labels. The label
 definition (all next-visit codes) mixes recurrent and new diagnoses. The GEM artefact affects the labels of every
-model trained so far, including the baseline of Table~\ref{tab:nb2}. The label-space study depends on the
+model trained so far, including the baseline of Table~\ref{tab:nb2}; retraining on the corrected mapping is the
+first item of the programme. The analyses of Section~\ref{sec:mimic} use an approximate cohort and label
+frequencies. The label-space study depends on the
 cross-references curated in Mondo: a rare disease without an ICD-10-CM cross-reference may still be coded in
 MIMIC-IV under some category, so the 37\% coverage is a statement about the mapping, not about clinical coding
 practice. Finally, MIMIC-IV comes from a single tertiary centre, and rare diseases seen there are those that lead
@@ -493,7 +596,7 @@ to hospital admission.
 
 Code, notebooks and results are in the project repository. \nb{src/rarepred} contains data loading, models,
 metrics and training; \nb{notebooks/} contains the preprocessing (1), the backbone (2), the looped Transformer (3),
-the label-space study (4), the knowledge base (5) and the experiments (6--8); \nb{scripts/} contains the Slurm
+the label-space study (4), the knowledge base (5), the experiments (6--8) and the MIMIC-IV code audit (9); \nb{scripts/} contains the Slurm
 scripts for the HubIA DGX and the script that downloads the public resources. MIMIC-IV data, processed
 artifacts and checkpoints stay on the cluster. Every number in this report is traceable to
 \nb{results/measured\_results.json} or to the saved outputs of a notebook.

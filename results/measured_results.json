@@ -285,5 +285,8 @@
   },
   "public_resources": {
     "source": "notebooks/04_rare_disease_resources.ipynb, results/rare_disease_resources.json"
+  },
+  "mimic_code_audit": {
+    "source": "notebooks/09_mimic_code_audit.ipynb, results/mimic_code_audit.json"
   }
 }

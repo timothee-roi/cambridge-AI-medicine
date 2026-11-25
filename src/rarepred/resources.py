@@ -138,6 +138,25 @@ def load_gem_first(path: str | Path) -> dict[str, str]:
     return mapping
 
 
+def gem_targets_corrected(gem_path: str | Path, icd9_frequency: dict) -> dict[str, list[str]]:
+    """ICD-10-CM -> ICD-9-CM targets without the "first target wins" artefact (Notebook 9).
+
+    Combination entries (GEM flag position 3 = 1) map to the union of their targets; for lists of
+    alternatives, the target most frequently coded in the ICD-9 era (``icd9_frequency``) is kept.
+    """
+    df = pd.read_csv(gem_path, sep=r"\s+", header=None, names=["icd10", "icd9", "flag"], dtype=str)
+    out = {}
+    for k, g in df.groupby("icd10", sort=False):
+        t = [x for x in g.icd9 if x != "NoDx"]
+        if not t:
+            out[k] = []
+        elif (g.flag.str[2] == "1").any():
+            out[k] = list(dict.fromkeys(t))
+        else:
+            out[k] = [max(t, key=lambda x: icd9_frequency.get(x, 0))]
+    return out
+
+
 def icd10_prefix_to_ccs(icd10_code: str, gem: dict, icd9_to_ccs: dict,
                         _sorted_keys: list | None = None) -> set[str]:
     """Map an ICD-10-CM code (possibly a non-billable parent such as ``Q87``)
@@ -177,6 +196,8 @@ class MondoTerm:
     subsets: set = field(default_factory=set)
     icd10cm_exact: set = field(default_factory=set)
     icd10cm_related: set = field(default_factory=set)
+    icd9_exact: set = field(default_factory=set)
+    icd9_related: set = field(default_factory=set)
     orphanet: set = field(default_factory=set)
     omim: set = field(default_factory=set)
     synonyms: list = field(default_factory=list)
@@ -229,6 +250,9 @@ def parse_mondo(obo_path: str | Path) -> dict[str, MondoTerm]:
                         cur.icd10cm_exact.add(code)
                     else:
                         cur.icd10cm_related.add(code)
+                elif ref.startswith("ICD9:") or ref.startswith("ICD9CM:"):
+                    code = ref.split(":", 1)[1].replace(".", "")
+                    (cur.icd9_exact if "MONDO:equivalentTo" in ann else cur.icd9_related).add(code)
                 elif ref.startswith("Orphanet:"):
                     cur.orphanet.add(ref.split(":", 1)[1])
                 elif ref.startswith("OMIM:"):

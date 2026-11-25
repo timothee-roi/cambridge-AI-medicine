@@ -1,0 +1,149 @@
+{
+  "n_rows": 6364488,
+  "n_eligible_patients_approx": 100057,
+  "i10": {
+    "rows": 83775,
+    "patients": 48611
+  },
+  "hypertension_split": {
+    "7.1.1": {
+      "9": 53401,
+      "10": 1915
+    },
+    "7.1.2.2": {
+      "9": 543,
+      "10": 48727
+    }
+  },
+  "n_labels_changed_25pct": 30,
+  "label_patients_nb1_vs_corrected": {
+    "7.1.1": {
+      "patients (Notebook 1 rule)": 34621,
+      "patients (corrected)": 51965,
+      "ratio": 1.5
+    },
+    "7.1.2.2": {
+      "patients (Notebook 1 rule)": 29159,
+      "patients (corrected)": 582,
+      "ratio": 0.02
+    },
+    "15.7": {
+      "patients (Notebook 1 rule)": 1957,
+      "patients (corrected)": 1,
+      "ratio": 0.0
+    },
+    "6.1.2": {
+      "patients (Notebook 1 rule)": 4777,
+      "patients (corrected)": 359,
+      "ratio": 0.08
+    },
+    "8.6.1": {
+      "patients (Notebook 1 rule)": 5723,
+      "patients (corrected)": 13712,
+      "ratio": 2.4
+    },
+    "8.6.2": {
+      "patients (Notebook 1 rule)": 11089,
+      "patients (corrected)": 3094,
+      "ratio": 0.28
+    },
+    "7.2.11": {
+      "patients (Notebook 1 rule)": 9826,
+      "patients (corrected)": 19433,
+      "ratio": 1.98
+    }
+  },
+  "rare_code_summary": [
+    {
+      "definition": "broad (Mondo rare)",
+      "exact ICD-10-CM / ICD-9 codes": "1025 / 682",
+      "codes seen in MIMIC-IV": 899,
+      "rows": 94699,
+      "admissions": 81890,
+      "patients": 46683,
+      "% of patients with a diagnosis": 20.91,
+      "of which >= 2 admissions": 31300
+    },
+    {
+      "definition": "strict (Orphanet rare)",
+      "exact ICD-10-CM / ICD-9 codes": "522 / 241",
+      "codes seen in MIMIC-IV": 402,
+      "rows": 26201,
+      "admissions": 24717,
+      "patients": 14664,
+      "% of patients with a diagnosis": 6.57,
+      "of which >= 2 admissions": 10077
+    }
+  ],
+  "label_quartiles_approx": {
+    "q25": 310.75,
+    "q50": 1487.0,
+    "q75": 4491.25
+  },
+  "by_quartile": [
+    {
+      "quartile": "Q1 (rarest)",
+      "definition": "broad (Mondo rare)",
+      "labels": 144,
+      "labels_with_rare_code": 40,
+      "rare_patients": 784.0,
+      "median_share_where_present": 0.168
+    },
+    {
+      "quartile": "Q2",
+      "definition": "broad (Mondo rare)",
+      "labels": 144,
+      "labels_with_rare_code": 35,
+      "rare_patients": 6744.0,
+      "median_share_where_present": 0.206
+    },
+    {
+      "quartile": "Q3",
+      "definition": "broad (Mondo rare)",
+      "labels": 144,
+      "labels_with_rare_code": 41,
+      "rare_patients": 11783.0,
+      "median_share_where_present": 0.033
+    },
+    {
+      "quartile": "Q4 (common)",
+      "definition": "broad (Mondo rare)",
+      "labels": 144,
+      "labels_with_rare_code": 51,
+      "rare_patients": 24961.0,
+      "median_share_where_present": 0.012
+    },
+    {
+      "quartile": "Q1 (rarest)",
+      "definition": "strict (Orphanet rare)",
+      "labels": 144,
+      "labels_with_rare_code": 28,
+      "rare_patients": 371.0,
+      "median_share_where_present": 0.158
+    },
+    {
+      "quartile": "Q2",
+      "definition": "strict (Orphanet rare)",
+      "labels": 144,
+      "labels_with_rare_code": 21,
+      "rare_patients": 2235.0,
+      "median_share_where_present": 0.068
+    },
+    {
+      "quartile": "Q3",
+      "definition": "strict (Orphanet rare)",
+      "labels": 144,
+      "labels_with_rare_code": 29,
+      "rare_patients": 3497.0,
+      "median_share_where_present": 0.014
+    },
+    {
+      "quartile": "Q4 (common)",
+      "definition": "strict (Orphanet rare)",
+      "labels": 144,
+      "labels_with_rare_code": 38,
+      "rare_patients": 5090.0,
+      "median_share_where_present": 0.004
+    }
+  ]
+}

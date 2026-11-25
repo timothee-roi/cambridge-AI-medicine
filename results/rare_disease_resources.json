@@ -9,15 +9,33 @@
     "n_diverging_ccs": 3864,
     "n_diverging_combination": 3572
   },
+  "n_mondo": 31828,
   "coverage": {
-    "Mondo diseases (non-obsolete)": 31828,
-    "in the rare subset": 16370,
-    "  with an exact ICD-10-CM xref": 1020,
-    "  with any ICD-10-CM xref": 6116,
-    "  with an Orphanet xref": 8669,
-    "  with an OMIM xref": 7830,
-    "  with HPO phenotype annotations": 9232,
-    "  with a gene association (HPO)": 6769
+    "diseases in the subset": 16370,
+    "with an exact ICD-10-CM xref": 1020,
+    "with any ICD-10-CM xref": 6116,
+    "with an exact ICD-9 xref": 671,
+    "with an Orphanet xref": 8669,
+    "with an OMIM xref": 7830,
+    "with HPO phenotype annotations": 9232,
+    "with a gene association (HPO)": 6769
+  },
+  "coverage_orphanet_rare": {
+    "diseases in the subset": 6331,
+    "with an exact ICD-10-CM xref": 518,
+    "with any ICD-10-CM xref": 3937,
+    "with an exact ICD-9 xref": 237,
+    "with an Orphanet xref": 6331,
+    "with an OMIM xref": 3203,
+    "with HPO phenotype annotations": 4801,
+    "with a gene association (HPO)": 2946
+  },
+  "orphanet_rare_reaching_ccs": 3908,
+  "orphanet_rare_n_ccs": 250,
+  "orphanet_rare_per_ccs": {
+    "median": 4.0,
+    "max": 889,
+    "argmax": "14.5.26"
   },
   "n_rare_reaching_ccs": 6066,
   "n_rare_reaching_ccs_exact": 965,
@@ -35,91 +53,106 @@
       "CCS": "14.5.26",
       "label": "All other congenital anomalies",
       "rare diseases (any xref)": 1076,
-      "rare diseases (exact xref)": 26
+      "rare diseases (exact xref)": 26,
+      "Orphanet-rare (any xref)": 889
     },
     {
       "CCS": "3.11.3",
       "label": "Other and unspecified metabolic; nutritional; and endocrine disorders",
       "rare diseases (any xref)": 670,
-      "rare diseases (exact xref)": 80
+      "rare diseases (exact xref)": 80,
+      "Orphanet-rare (any xref)": 393
     },
     {
       "CCS": "6.2.3.2",
       "label": "Other and unspecified hereditary and degenerative nervous conditions",
       "rare diseases (any xref)": 315,
-      "rare diseases (exact xref)": 27
+      "rare diseases (exact xref)": 27,
+      "Orphanet-rare (any xref)": 209
     },
     {
       "CCS": "14.5.14",
       "label": "Other congenital anomalies of limbs",
       "rare diseases (any xref)": 268,
-      "rare diseases (exact xref)": 4
+      "rare diseases (exact xref)": 4,
+      "Orphanet-rare (any xref)": 203
     },
     {
       "CCS": "14.5.23",
       "label": "Other congenital anomalies of integument",
       "rare diseases (any xref)": 203,
-      "rare diseases (exact xref)": 11
+      "rare diseases (exact xref)": 11,
+      "Orphanet-rare (any xref)": 148
     },
     {
       "CCS": "6.9.1",
       "label": "Disorders of the peripheral nervous system",
       "rare diseases (any xref)": 150,
-      "rare diseases (exact xref)": 27
+      "rare diseases (exact xref)": 27,
+      "Orphanet-rare (any xref)": 98
     },
     {
       "CCS": "6.8.3",
       "label": "Other ear and sense organ disorders",
       "rare diseases (any xref)": 143,
-      "rare diseases (exact xref)": 1
+      "rare diseases (exact xref)": 1,
+      "Orphanet-rare (any xref)": 6
     },
     {
       "CCS": "3.4",
       "label": "Other endocrine disorders",
       "rare diseases (any xref)": 139,
-      "rare diseases (exact xref)": 16
+      "rare diseases (exact xref)": 16,
+      "Orphanet-rare (any xref)": 90
     },
     {
       "CCS": "14.4.5",
       "label": "Other nervous system congenital anomalies",
       "rare diseases (any xref)": 138,
-      "rare diseases (exact xref)": 9
+      "rare diseases (exact xref)": 9,
+      "Orphanet-rare (any xref)": 75
     },
     {
       "CCS": "14.5.3",
       "label": "Congenital anomalies of the eye",
       "rare diseases (any xref)": 126,
-      "rare diseases (exact xref)": 5
+      "rare diseases (exact xref)": 5,
+      "Orphanet-rare (any xref)": 54
     },
     {
       "CCS": "1.4",
       "label": "Other infections; including parasitic",
       "rare diseases (any xref)": 90,
-      "rare diseases (exact xref)": 67
+      "rare diseases (exact xref)": 67,
+      "Orphanet-rare (any xref)": 49
     },
     {
       "CCS": "3.10",
       "label": "Immunity disorders",
       "rare diseases (any xref)": 88,
-      "rare diseases (exact xref)": 12
+      "rare diseases (exact xref)": 12,
+      "Orphanet-rare (any xref)": 58
     },
     {
       "CCS": "12.4",
       "label": "Other skin disorders",
       "rare diseases (any xref)": 81,
-      "rare diseases (exact xref)": 17
+      "rare diseases (exact xref)": 17,
+      "Orphanet-rare (any xref)": 66
     },
     {
       "CCS": "6.4.1",
       "label": "Epilepsy",
       "rare diseases (any xref)": 80,
-      "rare diseases (exact xref)": 2
+      "rare diseases (exact xref)": 2,
+      "Orphanet-rare (any xref)": 60
     },
     {
       "CCS": "6.7.6",
       "label": "Other eye disorders",
       "rare diseases (any xref)": 75,
-      "rare diseases (exact xref)": 15
+      "rare diseases (exact xref)": 15,
+      "Orphanet-rare (any xref)": 48
     }
   ],
   "n_icd10_3char_hosting_rare": 705,

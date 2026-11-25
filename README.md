@@ -20,6 +20,7 @@ notebooks/
   06_knowledge_embeddings.ipynb   LLM / RAG initialised embeddings, shrinkage, knowledge readout
   07_backbone_ablations.ipynb     fusion of the three encoders (concat / sum / cross-attention), set pooling
   08_rare_code_analysis.ipynb     per-label diagnostics: frequency, recurrence, diversity, geometry, MedCo groups
+  09_mimic_code_audit.ipynb       GEM artefact on MIMIC-IV diagnosis rows, rare-disease codes vs label rarity  [run]
 src/rarepred/                     data loading, models, metrics, training, resources, knowledge retrieval
 scripts/                          Slurm scripts for the HubIA DGX, download of public resources, report figures
 results/                          measured results (JSON/CSV); no patient-level data
@@ -34,7 +35,9 @@ local machine and are summarised in the report; they still need to be added unde
 | experiment | notebook | status |
 |---|---|---|
 | Backbone | 02 | done: test sample-AUPRC 0.471, rarest quartile 0.290, most frequent 0.543 |
-| Label space vs rare diseases, GEM audit | 04 | done on public data; join with MIMIC-IV frequencies runs on the cluster |
+| Label space vs rare diseases, GEM audit | 04 | done |
+| MIMIC-IV code audit (GEM artefact, rare-disease codes) | 09 | done on `diagnoses_icd` (approximate cohort: no `admissions` table) |
+| Corrected labels (`gem_targets_corrected`) and retrained baseline | 01, 02 | planned, first |
 | Knowledge documents | 05 | done (589 CCS categories); text encoding runs on the cluster |
 | Knowledge injection (LLM, RAG, shrinkage, readout) | 06 | implemented, tested end to end on synthetic data |
 | Fusion and pooling ablations | 07 | implemented, tested end to end on synthetic data |
