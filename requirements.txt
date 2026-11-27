@@ -1,0 +1,12 @@
+# Python 3.12 on the HubIA DGX (torch 2.7.1+cu126); install torch first from the CUDA index.
+torch>=2.7
+pyhealth==2.0.2
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+papermill
+nbformat
+rdata                 # reads the CCS tables of the `icd` R package (Notebook 4)
+sentence-transformers # text encoders for Notebook 5 (BioLORD-2023)

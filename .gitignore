@@ -1,8 +1,26 @@
 .DS_Store
-*.csv
 *.csv.gz
 .ipynb_checkpoints/
 __pycache__/
 *.py[cod]
 .venv/
 venv/
+# MIMIC-IV data and anything derived at patient level never leave the cluster
+data/
+processed/
+checkpoints/
+notebooks/executed/
+notebooks/logs/
+*.pt
+*.pkl
+*.npz
+# LaTeX build files
+report/*.aux
+report/*.log
+report/*.out
+report/*.bbl
+report/*.blg
+report/*.toc
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
